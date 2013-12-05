@@ -693,6 +693,8 @@ class MixxxCore(Feature):
 
                    "waveform/widgets/glslwaveformwidget.cpp",
 
+		   "qml/qmlengine.cpp",
+
                    "skin/imginvert.cpp",
                    "skin/imgloader.cpp",
                    "skin/imgcolor.cpp",
