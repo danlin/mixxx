@@ -18,6 +18,7 @@ class MixxxKeyboard;
 class PlayerManager;
 class WAbstractControl;
 class ControllerManager;
+class QmlEngine;
 
 class LegacySkinParser : public QObject, public SkinParser {
     Q_OBJECT
@@ -72,6 +73,7 @@ class LegacySkinParser : public QObject, public SkinParser {
     QWidget* parseSplitter(QDomElement node);
     QWidget* parseLibrary(QDomElement node);
     QWidget* parseLibrarySidebar(QDomElement node);
+    QWidget* parseQml(QDomElement node);
 
     void setupPosition(QDomNode node, QWidget* pWidget);
     void setupSize(QDomNode node, QWidget* pWidget);
@@ -93,6 +95,9 @@ class LegacySkinParser : public QObject, public SkinParser {
     Tooltips m_tooltips;
     static QList<const char*> s_channelStrs;
     static QMutex s_safeStringMutex;
+
+    QString m_sSkinPath;
+    QmlEngine *m_pQmlEngine;
 };
 
 
