@@ -403,6 +403,7 @@ QWidget* LegacySkinParser::parseQml(QDomElement node) {
 
     pContext->setContextProperty("MixxxEngine", m_pQmlEngine);
     pQmlView->setSource(QUrl::fromLocalFile(skinQmlPath));
+    qDebug() << "Load QML File:" << skinQmlPath;
     if (!pQmlView->errors().empty()) {
         for (int i = 0; i < pQmlView->errors().length(); ++i) {
             QMessageBox msgBox(QMessageBox::Critical, pQmlView->errors().at(i).description(), pQmlView->errors().at(i).toString());
@@ -601,6 +602,14 @@ QWidget* LegacySkinParser::parseBackground(QDomElement node, QWidget* pGrandpare
     if (background != NULL && !background->isNull()) {
         m_pParent->setFixedSize(background->width(), background->height());
         pGrandparent->setMinimumSize(background->width(), background->height());
+    }
+
+    if (!XmlParse::selectNode(node, "Size").isNull()) {
+        QString size = XmlParse::selectNodeQString(node, "Size");
+        int comma = size.indexOf(",");
+        int width = size.left(comma).toInt();
+        int height = size.mid(comma+1).toInt();
+        m_pParent->setMinimumSize(width, height);
     }
 
     QColor c(0,0,0); // Default background color is now black, if people want to do <invert/> filters they'll have to figure something out for this.
