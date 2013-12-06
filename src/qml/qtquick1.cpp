@@ -1,4 +1,4 @@
-#include "qmlengine.h"
+#include "qtquick1.h"
 
 #include "configobject.h"
 #include "controlobject.h"

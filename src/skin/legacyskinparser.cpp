@@ -30,7 +30,7 @@
 #include "skin/colorschemeparser.h"
 #include "skin/propertybinder.h"
 
-#include "qml/qmlengine.h"
+#include "qml/qtquick1.h"
 
 #include "widget/wwidget.h"
 #include "widget/wabstractcontrol.h"
