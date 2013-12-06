@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE skin>
+<skin>
+    <manifest>
+        <title>QML Demo</title>
+        <author>Daniel Lindenfelser</author>
+        <version>1.0.0</version>
+        <description>QML Demo Skin</description>
+        <language>en</language>
+        <license>Creative Commons Attribution, Share-Alike 3.0 Unported</license>
+        <attributes>
+            <attribute config_key="[Master],num_decks">2</attribute>
+            <attribute config_key="[Master],num_samplers">4</attribute>
+            <attribute config_key="[Master],num_preview_decks">1</attribute>
+            <!--Optionally, make elements visible on skin load-->
+            <attribute config_key="[Spinny1],show_spinny">1</attribute>
+            <attribute config_key="[Spinny2],show_spinny">1</attribute>
+            <attribute config_key="[Samplers],show_samplers">0</attribute>
+            <attribute config_key="[Microphone],show_microphone">0</attribute>
+            <attribute config_key="[Vinylcontrol],show_vinylcontrol">0</attribute>
+            <attribute config_key="[PreviewDeck],show_previewdeck">0</attribute>
+        </attributes>
+	</manifest>
+    <Background>
+        <Size>1024,768</Size>
+        <BgColor>#000000</BgColor>
+    </Background>
+			<Qml>
+                <Size>1024me,768me</Size>
+                <Path>Base/Mixxx.qml</Path>
+			</Qml>
+</skin>
