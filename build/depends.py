@@ -203,7 +203,7 @@ class Qt(Dependence):
         if qt5:
             # Enable qt4 support.
             build.env.Append(CPPDEFINES = 'QT_DISABLE_DEPRECATED_BEFORE')
-            qt_modules.extend(['QtWidgets', 'QtConcurrent'])
+            qt_modules.extend(['QtWidgets', 'QtConcurrent', 'QtQml', 'QtQuick'])
 
         # Enable Qt include paths
         if build.platform_is_linux:
@@ -693,7 +693,7 @@ class MixxxCore(Feature):
 
                    "waveform/widgets/glslwaveformwidget.cpp",
 
-		   "qml/qmlengine.cpp",
+		           "qml/qtquick1.cpp",
 
                    "skin/imginvert.cpp",
                    "skin/imgloader.cpp",
