@@ -367,13 +367,10 @@ QWidget* LegacySkinParser::parseNode(QDomElement node, QWidget *pGrandparent) {
         return parseLibrarySidebar(node);
     } else if (nodeName == "Library") {
         return parseLibrary(node);
-<<<<<<< HEAD
     } else if (nodeName == "Qml") {
         return parseQml(node);
-=======
     } else if (nodeName == "Key") {
         return parseKey(node);
->>>>>>> a662f45549f57785667741cb99e49952ab10d417
     } else {
         qDebug() << "Invalid node name in skin:" << nodeName;
     }
