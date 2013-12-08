@@ -27,6 +27,6 @@
     </Background>
 			<Qml>
                 <Size>1024me,768me</Size>
-                <Path>Base/Mixxx.qml</Path>
+                <Path>Base/Main.qml</Path>
 			</Qml>
 </skin>

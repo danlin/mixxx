@@ -1,6 +1,5 @@
 import QtQuick 1.1
 import "Engine.js" as Engine
-import "../Controls/Mixxx"
 
 Item {
     id: mixxx
@@ -22,12 +21,5 @@ Item {
         id: background
         color: "#0c0e0e"
         anchors.fill: parent
-        MixxxToolbar {
-            id: mixxxToolbar
-            onHideMixer: { Engine.hideMixer(); }
-	  	}
-        MixxxDeckView {
-            id: mixxxDeckView
-        }
     }
 }

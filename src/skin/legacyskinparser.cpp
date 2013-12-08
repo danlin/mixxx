@@ -13,6 +13,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 #include <QDeclarativeView>
+#include <QDeclarativeError>
 #include <QDeclarativeContext>
 
 #include "controlobject.h"
@@ -30,7 +31,9 @@
 #include "skin/colorschemeparser.h"
 #include "skin/propertybinder.h"
 
+#include "qml/qmlengine.h"
 #include "qml/qtquick1.h"
+#include "qml/qtquick2.h"
 
 #include "widget/wwidget.h"
 #include "widget/wabstractcontrol.h"
@@ -307,7 +310,7 @@ QWidget* LegacySkinParser::parseNode(QDomElement node, QWidget *pGrandparent) {
     if (nodeName == "skin") {
         // Descend children, should only happen for the root node
         QDomNodeList children = node.childNodes();
-
+        
         for (int i = 0; i < children.count(); ++i) {
             QDomNode node = children.at(i);
 
@@ -420,7 +423,7 @@ QWidget* LegacySkinParser::parseQml(QDomElement node) {
     pLayout->addWidget(pQmlView);
     pLayout->setContentsMargins(0, 0, 0, 0);
 
-    m_pQmlEngine->setup(m_pPlayerManager, m_pLibrary, pQmlView);
+    m_pQmlEngine->setup(m_pPlayerManager, m_pLibrary);
 
     return pQmlWidget;
 }
