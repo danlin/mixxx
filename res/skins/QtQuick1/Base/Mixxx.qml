@@ -10,16 +10,26 @@ Item {
         Engine.init();
     }
 
-	Connections {
-		target: MixxxEngine
+    Connections {
+        target: MixxxEngine
         onMixxxEvent: {
             Engine.onMixxxEvent(eventKey, value);
+        }
+        onMixxxInitialized: {
+            mixxx.init();
+            mixxx.mixxxReady();
         }
     }
     
     Rectangle {
         id: background
-        color: "#0c0e0e"
+        color: "#fdf6e3"
         anchors.fill: parent
+        Rectangle {
+            id: box
+            color: "#2aa198"
+            width: 100
+            height: 200
+        }
     }
 }

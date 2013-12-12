@@ -29,13 +29,12 @@ Item {
     }
     
     function unlock() {
-        //if(done) {
-            MixxxEngine.setValue("[Library]", "visible", 1);
+        if(done) {
             splashLoader.source = "";
             mixxxConnection.target = null;
             splashConnection.target = null;
-        //}
+        }
         
-        //done = true;
+        done = true;
     }
 }

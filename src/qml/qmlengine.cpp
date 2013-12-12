@@ -6,7 +6,7 @@
 
 QmlEngine::QmlEngine()
 {
-	    // register all QML Widget Proxies here
+    // register all QML Widget Proxies here
     /*
      qmlRegisterType<QmlExample>("Mixxx", 1,0, "MixxxExample");
      */

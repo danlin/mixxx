@@ -2,10 +2,10 @@
 <!DOCTYPE skin>
 <skin>
     <manifest>
-        <title>QML Demo</title>
+        <title>QT Quick 1 Demo</title>
         <author>Daniel Lindenfelser</author>
         <version>1.0.0</version>
-        <description>QML Demo Skin</description>
+        <description>QTQuick 1 (QT 4.8+) Demo Skin</description>
         <language>en</language>
         <license>Creative Commons Attribution, Share-Alike 3.0 Unported</license>
         <attributes>
@@ -22,11 +22,11 @@
         </attributes>
 	</manifest>
     <Background>
-        <Size>1024,768</Size>
+        <Size>640,480</Size>
         <BgColor>#000000</BgColor>
     </Background>
-			<Qml>
-                <Size>1024me,768me</Size>
-                <Path>Base/Main.qml</Path>
-			</Qml>
+    <QtQuick1>
+        <Size>640me,480me</Size>
+        <Path>Base/Main.qml</Path>
+    </QtQuick1>
 </skin>

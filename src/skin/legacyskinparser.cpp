@@ -12,9 +12,6 @@
 #include <QVBoxLayout>
 #include <QtDebug>
 #include <QtGlobal>
-#include <QDeclarativeView>
-#include <QDeclarativeError>
-#include <QDeclarativeContext>
 
 #include "controlobject.h"
 #include "controlobjectthreadmain.h"
@@ -107,6 +104,7 @@ LegacySkinParser::LegacySkinParser(ConfigObject<ConfigValue>* pConfig,
       m_pVCManager(pVCMan),
       m_pParent(NULL),
       m_pQmlEngine(new QmlEngine) {
+    m_pQmlEngine->setup(m_pPlayerManager, m_pLibrary);
 }
 
 LegacySkinParser::~LegacySkinParser() {
@@ -370,8 +368,10 @@ QWidget* LegacySkinParser::parseNode(QDomElement node, QWidget *pGrandparent) {
         return parseLibrarySidebar(node);
     } else if (nodeName == "Library") {
         return parseLibrary(node);
-    } else if (nodeName == "Qml") {
-        return parseQml(node);
+    } else if (nodeName == "QtQuick1") {
+        return parseQtQuick1(node);
+    } else if (nodeName == "QtQuick2") {
+        return parseQtQuick2(node);
     } else if (nodeName == "Key") {
         return parseKey(node);
     } else {
@@ -381,7 +381,7 @@ QWidget* LegacySkinParser::parseNode(QDomElement node, QWidget *pGrandparent) {
     return NULL;
 }
 
-QWidget* LegacySkinParser::parseQml(QDomElement node) {
+QWidget* LegacySkinParser::parseQtQuick2(QDomElement node) {
     QWidget* pQmlWidget = new QWidget(m_pParent);
 
     setupWidget(node, pQmlWidget);
@@ -396,37 +396,33 @@ QWidget* LegacySkinParser::parseQml(QDomElement node) {
         return pQmlWidget;
     }
 
-    QDeclarativeView *pQmlView = new QDeclarativeView;
-    // Set optimizations not already done in QDeclarativeView
-    pQmlView->setAttribute(Qt::WA_OpaquePaintEvent);
-    pQmlView->setAttribute(Qt::WA_NoSystemBackground);
-    // Make QDeclarativeView use OpenGL backend
-    QGLWidget *glWidget = new QGLWidget(QGLFormat(QGL::SampleBuffers));
-    pQmlView->setViewport(glWidget);
-    pQmlView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    QtQuick2::setupWidget(pQmlWidget, skinQmlPath, m_pQmlEngine);
+    m_pQmlEngine->initialized();
+    
+    return pQmlWidget;
+}
 
-    QDeclarativeContext *pContext = pQmlView->rootContext();
+QWidget* LegacySkinParser::parseQtQuick1(QDomElement node) {
+    QWidget* pQmlWidget = new QWidget(m_pParent);
 
-    pContext->setContextProperty("MixxxEngine", m_pQmlEngine);
-    pQmlView->setSource(QUrl::fromLocalFile(skinQmlPath));
-    qDebug() << "Load QML File:" << skinQmlPath;
-    if (!pQmlView->errors().empty()) {
-        for (int i = 0; i < pQmlView->errors().length(); ++i) {
-            QMessageBox msgBox(QMessageBox::Critical, pQmlView->errors().at(i).description(), pQmlView->errors().at(i).toString());
-            msgBox.exec();
-        }
-        exit(1);
+    setupWidget(node, pQmlWidget);
+
+    QString filename = XmlParse::selectNodeQString(node, "Path");
+
+    QDir skinDir(m_sSkinPath);
+    QString skinQmlPath = skinDir.filePath(filename);
+    QFile skinQmlFile(skinQmlPath);
+
+    if (!skinQmlFile.open(QIODevice::ReadOnly)) {
+        return pQmlWidget;
     }
-    pQmlView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 
-    QVBoxLayout *pLayout = new QVBoxLayout(pQmlWidget);
-    pLayout->addWidget(pQmlView);
-    pLayout->setContentsMargins(0, 0, 0, 0);
-
-    m_pQmlEngine->setup(m_pPlayerManager, m_pLibrary);
+    QtQuick1::setupWidget(pQmlWidget, skinQmlPath, m_pQmlEngine);
+    m_pQmlEngine->initialized();
 
     return pQmlWidget;
 }
+
 
 QWidget* LegacySkinParser::parseSplitter(QDomElement node) {
     QSplitter* pSplitter = new QSplitter(m_pParent);
@@ -1287,23 +1283,23 @@ void LegacySkinParser::setupSize(QDomNode node, QWidget* pWidget) {
         bool shouldSetWidthFixed = false;
 
         if (xs.endsWith("me")) {
-            //qDebug() << "horizontal minimum expanding";
+            qDebug() << "horizontal minimum expanding";
             sizePolicy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
             xs = xs.left(xs.size()-2);
         } else if (xs.endsWith("e")) {
-            //qDebug() << "horizontal expanding";
+            qDebug() << "horizontal expanding";
             sizePolicy.setHorizontalPolicy(QSizePolicy::Expanding);
             xs = xs.left(xs.size()-1);
         } else if (xs.endsWith("i")) {
-            //qDebug() << "horizontal ignored";
+            qDebug() << "horizontal ignored";
             sizePolicy.setHorizontalPolicy(QSizePolicy::Ignored);
             xs = xs.left(xs.size()-1);
         } else if (xs.endsWith("p")) {
-            //qDebug() << "horizontal preferred";
+            qDebug() << "horizontal preferred";
             sizePolicy.setHorizontalPolicy(QSizePolicy::Preferred);
             xs = xs.left(xs.size()-1);
         } else if (xs.endsWith("f")) {
-            //qDebug() << "horizontal fixed";
+            qDebug() << "horizontal fixed";
             sizePolicy.setHorizontalPolicy(QSizePolicy::Fixed);
             xs = xs.left(xs.size()-1);
             shouldSetWidthFixed = true;
@@ -1315,33 +1311,33 @@ void LegacySkinParser::setupSize(QDomNode node, QWidget* pWidget) {
         int x = xs.toInt(&widthOk);
         if (widthOk) {
             if (shouldSetWidthFixed) {
-                //qDebug() << "setting width fixed to" << x;
+                qDebug() << "setting width fixed to" << x;
                 pWidget->setFixedWidth(x);
             } else {
-                //qDebug() << "setting width to" << x;
+                qDebug() << "setting width to" << x;
                 pWidget->setMinimumWidth(x);
             }
         }
 
         bool shouldSetHeightFixed = false;
         if (ys.endsWith("me")) {
-            //qDebug() << "vertical minimum expanding";
+            qDebug() << "vertical minimum expanding";
             sizePolicy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
             ys = ys.left(ys.size()-2);
         } else if (ys.endsWith("e")) {
-            //qDebug() << "vertical expanding";
+            qDebug() << "vertical expanding";
             sizePolicy.setVerticalPolicy(QSizePolicy::Expanding);
             ys = ys.left(ys.size()-1);
         } else if (ys.endsWith("i")) {
-            //qDebug() << "vertical ignored";
+            qDebug() << "vertical ignored";
             sizePolicy.setVerticalPolicy(QSizePolicy::Ignored);
             ys = ys.left(ys.size()-1);
         } else if (ys.endsWith("p")) {
-            //qDebug() << "vertical preferred";
+            qDebug() << "vertical preferred";
             sizePolicy.setVerticalPolicy(QSizePolicy::Preferred);
             ys = ys.left(ys.size()-1);
         } else if (ys.endsWith("f")) {
-            //qDebug() << "vertical fixed";
+            qDebug() << "vertical fixed";
             sizePolicy.setVerticalPolicy(QSizePolicy::Fixed);
             ys = ys.left(ys.size()-1);
             shouldSetHeightFixed = true;
@@ -1353,10 +1349,10 @@ void LegacySkinParser::setupSize(QDomNode node, QWidget* pWidget) {
         int y = ys.toInt(&heightOk);
         if (heightOk) {
             if (shouldSetHeightFixed) {
-                //qDebug() << "setting height fixed to" << x;
+                qDebug() << "setting height fixed to" << x;
                 pWidget->setFixedHeight(y);
             } else {
-                //qDebug() << "setting height to" << y;
+                qDebug() << "setting height to" << y;
                 pWidget->setMinimumHeight(y);
             }
         }
