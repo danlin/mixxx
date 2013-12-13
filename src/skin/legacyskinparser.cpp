@@ -30,8 +30,9 @@
 
 #include "qml/qmlengine.h"
 #include "qml/qtquick1.h"
-#include "qml/qtquick2.h"
-
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    #include "qml/qtquick2.h"
+#endif
 #include "widget/wwidget.h"
 #include "widget/wabstractcontrol.h"
 #include "widget/wknob.h"
@@ -386,6 +387,7 @@ QWidget* LegacySkinParser::parseQtQuick2(QDomElement node) {
 
     setupWidget(node, pQmlWidget);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     QString filename = XmlParse::selectNodeQString(node, "Path");
 
     QDir skinDir(m_sSkinPath);
@@ -398,7 +400,10 @@ QWidget* LegacySkinParser::parseQtQuick2(QDomElement node) {
 
     QtQuick2::setupWidget(pQmlWidget, skinQmlPath, m_pQmlEngine);
     m_pQmlEngine->initialized();
-    
+#else
+    qDebug() << "Sorry Qt Quick 2 is not supportet with QT < 5.0"; 
+#endif
+
     return pQmlWidget;
 }
 
