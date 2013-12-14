@@ -401,7 +401,7 @@ QWidget* LegacySkinParser::parseQtQuick2(QDomElement node) {
     QtQuick2::setupWidget(pQmlWidget, skinQmlPath, m_pQmlEngine);
     m_pQmlEngine->initialized();
 #else
-    qDebug() << "Sorry Qt Quick 2 is not supportet with QT < 5.0"; 
+    qDebug() << "You need QT > 5.0 to run Qt Quick 2 skins"; 
 #endif
 
     return pQmlWidget;
