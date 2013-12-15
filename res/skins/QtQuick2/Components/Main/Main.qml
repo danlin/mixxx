@@ -107,7 +107,7 @@ Item {
                     color: Theme.Current.BackgroundHighlights
                     font.family: iconFont.name
                     font.pointSize: 128
-                    text: mixxxErrorScreen.isWarning ? "" : ""
+                    text: mixxxErrorScreen.isWarning ? Theme.Icon.warning_outline : Theme.Icon.warning
                 }
             }
             Emitter {
@@ -123,7 +123,7 @@ Item {
             font.pointSize: 512
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: mixxxErrorScreen.isWarning ? "" : ""
+            text: mixxxErrorScreen.isWarning ? Theme.Icon.warning_outline : Theme.Icon.warning
         }
 
         Text {
