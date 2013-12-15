@@ -34,7 +34,7 @@ QString QtQuick2::getLastWarning() {
         return "";
     }
     
-    return m_warnings.at(0).description();
+    return m_warnings.at(m_warnings.length() - 1).toString();
 }
 
 QString QtQuick2::getWarnings() {
@@ -44,7 +44,7 @@ QString QtQuick2::getWarnings() {
     
     QString warnings;
     for (int i = 0; i < m_warnings.length(); ++i) {
-        warnings += m_warnings.at(i).description() + "\n";
+        warnings += m_warnings.at(i).toString() + "\n";
     }
     
     return warnings;

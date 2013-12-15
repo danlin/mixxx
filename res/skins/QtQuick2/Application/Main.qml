@@ -1,7 +1,7 @@
 import QtQuick 2.2
 import "../Components"
 
-MixxxMain {
+MixxxApplication {
     Component.onCompleted: {
         startMixxx("Mixxx.qml");
     }

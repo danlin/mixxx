@@ -14,7 +14,6 @@ Item {
     }
 
 	Component.onCompleted: {
-        console.log("Mixxx Ready")
         mixxx.mixxxReady();
     }
     
@@ -38,7 +37,7 @@ Item {
             x: 100
             y: 100
             id: testButton
-            text: "Test"
+            text: "Press for Warning"
             Connections {
                 target: MixxxEngine
                 onMixxxEvent: {
@@ -51,7 +50,43 @@ Item {
                 }
             }
             onClicked: {
-                dadssakdakfa
+                console.log("test");dasdsa
+            }
+        }
+
+        Button {
+            x: 300
+            y: 100
+            text: "Dump Warnings"
+            onClicked: {
+                console.log(MixxxTools.getWarnings());
+            }
+        }
+
+        Button {
+            x: 100
+            y: 200
+            text: "Reset Warnings"
+            onClicked: {
+                MixxxTools.clearWarnings();
+            }
+        }
+
+        Button {
+            x: 300
+            y: 200
+            text: "Enable Warning Screen"
+            onClicked: {
+                mixxxApplication.holdOnWarnings = true
+            }
+        }
+
+        Button {
+            x: 100
+            y: 300
+            text: "Reboot UI"
+            onClicked: {
+                mixxxApplication.reloadUI();
             }
         }
     }

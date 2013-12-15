@@ -1,5 +1,5 @@
 module Mixxx
-MixxxMain 1.0 Main/Main.qml
+MixxxApplication 1.0 Main/Main.qml
 
 Engine 1.0 Scripts/Engine.js
 Theme 1.0 Scripts/Theme.js

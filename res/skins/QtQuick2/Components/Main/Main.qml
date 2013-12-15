@@ -3,19 +3,42 @@ import QtQuick.Particles 2.0
 import "../"
 
 Item {
-    property bool done: true
-    property string mainFile: ""
-    property bool error: true
+    id: mixxxApplication
+    QtObject {
+        id: internal        
+    }
 
+    property bool loadingDone: true
+    property string currentQmlFile: ""
+    property bool errorVisible: false
+
+    property bool holdOnWarnings: false;
+
+    // load icon font
     FontLoader {
         id: iconFont
         source: "../../Fonts/typicons.ttf"
     }
 
+    Connections {
+        target: MixxxTools
+        onWarning: {
+            if (mixxxApplication.holdOnWarnings) {
+                if (!mixxxErrorScreen.visible) {
+                    mixxxErrorScreen.errorMessage = MixxxTools.getLastWarning();
+                    mixxxErrorScreen.isWarning = true;
+                    mixxxApplication.errorVisible = true;
+                } else if (mixxxErrorScreen.isWarning) {
+                    mixxxErrorScreen.errorMessage += MixxxTools.getLastWarning();
+                }
+            }
+        }
+    }
+
     function startMixxx(mainQmlFile) {
-        mainFile = Qt.resolvedUrl("../../Application/" + mainQmlFile);
-        console.log("QML Load: " + mainFile);
-        mixxxLoader.source = mainFile;
+        mixxxApplication.currentQmlFile = Qt.resolvedUrl("../../Application/" + mainQmlFile);
+        console.log("[QML] Load: " + mixxxApplication.currentQmlFile);
+        mixxxLoader.source = mixxxApplication.currentQmlFile;
         splashLoader.active = true;
     }
 
@@ -34,53 +57,43 @@ Item {
         active: false
         onLoaded: mixxxLoader.active = true
     }
-
-    Connections {
-        id: mixxxConnection
-        target: mixxxLoader.item
-        onMixxxReady: {
-            console.log("onMixxxReady");
-            unlock();
-        }
-    }
     
     Connections {
         id: splashConnection
         target: splashLoader.item
         onTimeout: { 
-            console.log("onTimeout");
             unlock();
         }
     }
     
     function unlock() {
-        console.log("unlock");
-        if(done) {
+        if(mixxxApplication.loadingDone) {
             splashLoader.source = "";
-            mixxxConnection.target = null;
             splashConnection.target = null;
         }
         
-        done = true;
+        mixxxApplication.loadingDone = true;
     }
 
     function reloadUI() {
         mixxxLoader.source = "";
         splashLoader.source = "";
-        mixxxConnection.target = null;
         splashConnection.target = null;
-        console.log("Reload UI");
+        console.log("[QML] Reboot UI");
         MixxxTools.clearComponentCache();
-        console.log("QML Load: " + mainFile);
-        mixxxLoader.source = mainFile;
+        console.log("[QML] Load: " + mixxxApplication.currentQmlFile);
+        mixxxLoader.source = mixxxApplication.currentQmlFile;
         mixxxLoader.active = true;
     }
 
     Item {
-        id: errorView
+        id: mixxxErrorScreen
+
+        property bool isWarning: false;
+        property string errorMessage: "";
 
         anchors.fill: parent
-        visible: mixxxLoader.status == Loader.Error
+        visible: mixxxLoader.status == Loader.Error || mixxxApplication.errorVisible
 
         Rectangle {
             color: Theme.Current.Background
@@ -94,7 +107,7 @@ Item {
                     color: Theme.Current.BackgroundHighlights
                     font.family: iconFont.name
                     font.pointSize: 128
-                    text: error ? "" : ""
+                    text: mixxxErrorScreen.isWarning ? "" : ""
                 }
             }
             Emitter {
@@ -104,23 +117,31 @@ Item {
         }
 
         Text {
-            color: Theme.Colors.Red
+            color: mixxxErrorScreen.isWarning ? Theme.Colors.Yellow : Theme.Colors.Red
             opacity: 0.2
             font.family: iconFont.name
             font.pointSize: 512
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: error ? "" : ""
+            text: mixxxErrorScreen.isWarning ? "" : ""
         }
 
         Text {
-            color: Theme.Colors.Red
+            color: mixxxErrorScreen.isWarning ? Theme.Colors.Yellow : Theme.Colors.Red
             font.pointSize: 32
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Mixxx User Interface Crashed"
+            text: mixxxErrorScreen.isWarning ? "Warning" : "Mixxx User Interface Crashed"
         }
-            
+        
+        Text {
+            color: Theme.Current.ContentPrimary
+            font.pointSize: 14
+            width: parent.width
+            wrapMode: Text.WordWrap
+            text: mixxxErrorScreen.errorMessage
+        }
+
         Rectangle {
             width: parent.width
             height: 20
@@ -130,13 +151,13 @@ Item {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.Current.ContentSecondary
+                color: Theme.Current.ContentPrimary
                 font.pointSize: 16
-                text: "Reload User Interface"
+                text: mixxxErrorScreen.isWarning ? "Continue" : "Reload User Interface"
             }
             MouseArea {
                 anchors.fill: parent
-                onClicked: reloadUI();
+                onClicked: mixxxErrorScreen.isWarning ? mixxxApplication.errorVisible = false : reloadUI();
             }
         }
     }
