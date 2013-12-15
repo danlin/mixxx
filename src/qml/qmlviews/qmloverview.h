@@ -1,9 +1,9 @@
 #ifndef QMLOVERVIEW_H
-#define QTQUICK1_H
+#define QMLOVERVIEW_H
 
 #include <QQuickItem>
 
-class QtQuick1 : public QQuickItem
+class QmlOverview : public QQuickItem
 {
     Q_OBJECT
 public:

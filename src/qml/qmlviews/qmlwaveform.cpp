@@ -1,0 +1,1 @@
+#include "qmlwaveform.h"
