@@ -7,6 +7,11 @@ Item {
     property string mainFile: ""
     property bool error: true
 
+    FontLoader {
+        id: iconFont
+        source: "../../Fonts/typicons.ttf"
+    }
+
     function startMixxx(mainQmlFile) {
         mainFile = Qt.resolvedUrl("../../Application/" + mainQmlFile);
         console.log("QML Load: " + mainFile);
@@ -65,7 +70,7 @@ Item {
         mixxxConnection.target = null;
         splashConnection.target = null;
         console.log("Reload UI");
-        MixxxTools.clearCaches();
+        MixxxTools.clearComponentCache();
         console.log("QML Load: " + mainFile);
         mixxxLoader.source = mainFile;
         mixxxLoader.active = true;
@@ -73,11 +78,6 @@ Item {
 
     Item {
         id: errorView
-
-        FontLoader {
-            id: iconFont
-            source: "../../Fonts/typicons.ttf"
-        }
 
         anchors.fill: parent
         visible: mixxxLoader.status == Loader.Error

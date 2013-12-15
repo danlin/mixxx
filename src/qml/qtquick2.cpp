@@ -7,12 +7,25 @@
 
 #include "qtquick2.h"
 
+QtQuick2::QtQuick2(QQmlEngine *pEngine)
+    : m_pEngine(pEngine) {
+    
+}
+
+void QtQuick2::clearComponentCache() {
+    m_pEngine->clearComponentCache();
+}
+
 void QtQuick2::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine) {
 	QQuickView *pQQuickView = new QQuickView;
 	pQQuickView->setResizeMode(QQuickView::SizeRootObjectToView);
 
     QQmlContext *pContext = pQQuickView->rootContext();
-    pContext->setContextProperty("MixxxEngine", pQmlEngine); 
+    QQmlEngine *pEngine = pContext->engine();
+    QtQuick2 *pMixxxTools = new QtQuick2(pEngine);
+    
+    pContext->setContextProperty("MixxxEngine", pQmlEngine);
+    pContext->setContextProperty("MixxxTools", pMixxxTools);
 
     qDebug() << "Load QTQuick 2 File:" << skinQmlPath;
     pQQuickView->setSource(QUrl::fromLocalFile(skinQmlPath));
