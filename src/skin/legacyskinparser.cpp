@@ -246,6 +246,7 @@ QWidget* LegacySkinParser::parseSkin(QString skinPath, QWidget* pParent) {
     if (m_pParent) {
         qDebug() << "ERROR: Somehow a parent already exists -- you are probably re-using a LegacySkinParser which is not advisable!";
     }
+    m_sSkinPath = skinPath;
     QDomElement skinDocument = openSkin(skinPath);
 
     if (skinDocument.isNull()) {
@@ -401,7 +402,7 @@ QWidget* LegacySkinParser::parseQtQuick2(QDomElement node) {
     QDir skinDir(m_sSkinPath);
     QString skinQmlPath = skinDir.filePath(filename);
     QFile skinQmlFile(skinQmlPath);
-
+    
     if (!skinQmlFile.open(QIODevice::ReadOnly)) {
         return pQmlWidget;
     }
@@ -630,7 +631,7 @@ QWidget* LegacySkinParser::parseBackground(QDomElement node,
         int comma = size.indexOf(",");
         int width = size.left(comma).toInt();
         int height = size.mid(comma+1).toInt();
-        m_pParent->setMinimumSize(width, height);
+        pOuterWidget->setMinimumSize(width, height);
     }
 
     // Default background color is now black, if people want to do <invert/>
