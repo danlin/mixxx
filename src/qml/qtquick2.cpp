@@ -9,12 +9,47 @@
 
 QtQuick2::QtQuick2(QQmlEngine *pEngine)
     : m_pEngine(pEngine) {
-    
+        connect(pEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
 }
 
 void QtQuick2::clearComponentCache() {
     m_pEngine->clearComponentCache();
 }
+
+void QtQuick2::setConsoleWarnings(bool value) {
+    m_pEngine->setOutputWarningsToStandardError(value);
+}
+
+void QtQuick2::setWarnings(QList<QQmlError> warnings) {
+    m_warnings.append(warnings);
+    emit(warning());
+}
+
+void QtQuick2::clearWarnings() {
+    m_warnings.clear();
+}
+
+QString QtQuick2::getLastWarning() {
+    if (m_warnings.empty()) {
+        return "";
+    }
+    
+    return m_warnings.at(0).description();
+}
+
+QString QtQuick2::getWarnings() {
+    if (m_warnings.empty()) {
+        return "";
+    }
+    
+    QString warnings;
+    for (int i = 0; i < m_warnings.length(); ++i) {
+        warnings += m_warnings.at(i).description() + "\n";
+    }
+    
+    return warnings;
+}
+
 
 void QtQuick2::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine) {
 	QQuickView *pQQuickView = new QQuickView;
