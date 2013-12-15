@@ -21,12 +21,14 @@
             <attribute config_key="[PreviewDeck],show_previewdeck">0</attribute>
         </attributes>
 	</manifest>
+
     <Background>
-        <Size>640,480</Size>
+        <Size>800,600</Size>
         <BgColor>#000000</BgColor>
     </Background>
-	<QtQuick2>
-        <Size>640me,480me</Size>
-        <Path>Base/Main.qml</Path>
+	
+    <QtQuick2>
+        <Size>800,600</Size>
+        <Path>Application/Main.qml</Path>
     </QtQuick2>
 </skin>
