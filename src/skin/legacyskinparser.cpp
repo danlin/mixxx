@@ -633,7 +633,6 @@ QWidget* LegacySkinParser::parseBackground(QDomElement node,
         m_pParent->setMinimumSize(width, height);
     }
 
-    QColor c(0,0,0); // Default background color is now black, if people want to do <invert/> filters they'll have to figure something out for this.
     // Default background color is now black, if people want to do <invert/>
     // filters they'll have to figure something out for this.
     QColor c(0,0,0);
