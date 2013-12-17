@@ -778,9 +778,6 @@ class MixxxCore(Feature):
                    "waveform/widgets/glvsynctestwidget.cpp",
 
                    "waveform/widgets/glslwaveformwidget.cpp",
-
-                   "qml/qmlengine.cpp",
-		           "qml/qtquick1.cpp",
                    
                    "skin/imginvert.cpp",
                    "skin/imgloader.cpp",
@@ -835,7 +832,10 @@ class MixxxCore(Feature):
                    ]
         
         if Qt.qt5_enabled(build):
-            sources.append("qml/qtquick2.cpp")
+            sources.append("qml/items/qmlwaveform.cpp")
+            sources.append("qml/qmlcontrolobject.cpp")
+            sources.append("qml/qmlengine.cpp")
+            sources.append("qml/qmltools.cpp")
 
         proto_args = {
             'PROTOCPROTOPATH': ['src'],
