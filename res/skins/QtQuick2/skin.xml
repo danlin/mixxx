@@ -30,9 +30,9 @@
         <BgColor>#000000</BgColor>
     </Background>
 	
-    <QtQuick2>
+    <QtQuick>
         <MinimumSize>800,600</MinimumSize>
         <Size>me,me</Size>
         <Path>Application/Main.qml</Path>
-    </QtQuick2>
+    </QtQuick>
 </skin>

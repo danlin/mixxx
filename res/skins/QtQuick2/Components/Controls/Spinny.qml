@@ -6,7 +6,7 @@ Item {
 
     property real angle : 0;
 
-    MixxxEngineSource on angle { configKey: "[Channel1],playposition" }
+    MixxxControlObject on angle { configKey: "[Channel1],playposition" }
 
 	Rectangle {
         rotation: parent.angle * 360

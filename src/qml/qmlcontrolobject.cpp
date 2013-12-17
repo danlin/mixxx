@@ -6,7 +6,12 @@ QmlControlObject::QmlControlObject(QObject *parent)
 
 }
 
+QString QmlControlObject::configKey() const {
+	return m_configKey;
+}
+
 void QmlControlObject::setConfigKey(QString configKey) {
+	m_configKey = configKey;
 	ConfigKey key = ConfigKey::parseCommaSeparated(configKey);
 
 	if (m_cot != NULL) {
