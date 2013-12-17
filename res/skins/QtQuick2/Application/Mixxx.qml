@@ -3,20 +3,24 @@ import QtQuick.Controls 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Particles 2.0
 import "../Components"
+import Mixxx 1.0
 
 Item {
     id: mixxx
     anchors.fill: parent
     signal mixxxReady();
 
-    function init () {
-        Engine.init();
-    }
-
 	Component.onCompleted: {
         mixxx.mixxxReady();
     }
     
+    Connections {
+        target: MixxxEngine
+        onMixxxEvent: {
+            Engine.EventListener.onMixxxEvent(eventKey, value);
+        }
+    }
+
     Rectangle {
         id: background
         color: Theme.Current.Background
@@ -33,6 +37,16 @@ Item {
                 }
             }
         }
+
+        Rectangle {
+            width: 400;
+            height: 150;
+            color: Theme.Current.BackgroundHighlights
+            MixxxWaveform {
+                anchors.fill: parent
+            }
+        }
+
         Button {
             x: 100
             y: 100
@@ -88,6 +102,13 @@ Item {
             onClicked: {
                 mixxxApplication.reloadUI();
             }
+        }
+
+        Spinny {
+            x: 300
+            y: 300
+            width: 200
+            height: 200
         }
     }
 }

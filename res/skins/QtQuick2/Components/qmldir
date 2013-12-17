@@ -3,3 +3,9 @@ MixxxApplication 1.0 Main/Main.qml
 
 Engine 1.0 Scripts/Engine.js
 Theme 1.0 Scripts/Theme.js
+
+// Helper
+Circle 1.0 Helper/Circle.qml
+Icon 1.0 Helper/Icon.qml
+
+Spinny 1.0 Controls/Spinny.qml

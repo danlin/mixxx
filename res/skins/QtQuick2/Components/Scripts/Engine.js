@@ -305,30 +305,37 @@ function enableSamplerEvents(sampler) {
     MixxxEngine.enableEvent("[Sampler" + sampler + "]","wheel");
 }
 
-function onMixxxEvent(configKey, value) {
-    
-    switch (configKey) {
-        case "num_decks":
-            num_decks = value;
-            break;
-        case "num_samplers":
-            num_samplers = value;
-            break;
-        case "[Channel1],VuMeterL":
-        case "[Channel1],VuMeterR":
-        case "[Channel1],VuMeter":
-        case "[Master],VuMeter":
-        case "[Master],VuMeterR":
-        case "[Master],VuMeterL":
-            break;
-        default:
-            console.log("Mixxx Event: " + configKey + " = " + value);
-            break;
-    }
-}
+var EventListener = {
 
-function hideMixer() {
-    console.log("Hide Mixer");
-    mixxxDeckView.showMixer = false;
-}
+    add : function(configKey, callback) {
+        console.log(configKey);
+        console.log(EventListener.listener[configKey]);
+        if (EventListener.listener[configKey] === undefined) {
+            console.log("create")
+            EventListener.listener[configKey] = {}
+            EventListener.listener[configKey]['count'] = 1
+            EventListener.listener[configKey]['callbacks'] = new Array();
 
+            EventListener.listener[configKey].callbacks.push(callback);
+
+            var config = configKey.split(',');
+            MixxxEngine.enableEvent(config[0], config[1]);
+            
+        } else {
+            console.log("add")
+            EventListener.listener[configKey].count++;
+            EventListener.listener[configKey].callbacks.push(callback);
+            
+        }
+    },
+
+    onMixxxEvent : function(configKey, value) {
+        if (EventListener.listener[configKey] === undefined)
+            return;
+        for (var i=0;i<EventListener.listener[configKey].callbacks.length;i++) {
+            EventListener.listener[configKey].callbacks[i](value);
+        }
+    },
+
+    listener : {}
+}

@@ -22,13 +22,17 @@
         </attributes>
 	</manifest>
 
+    <MinimumSize>800,600</MinimumSize>
+    <SizePolicy>me,max</SizePolicy>
+    <Layout>vertical</Layout>
+
     <Background>
-        <Size>800,600</Size>
         <BgColor>#000000</BgColor>
     </Background>
 	
     <QtQuick2>
-        <Size>800,600</Size>
+        <MinimumSize>800,600</MinimumSize>
+        <Size>me,me</Size>
         <Path>Application/Main.qml</Path>
     </QtQuick2>
 </skin>

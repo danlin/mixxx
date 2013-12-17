@@ -5,31 +5,31 @@
 #include <QQmlError>
 #include <QQmlContext>
 
-#include "qtquick2.h"
+#include "qmltools.h"
 
-QtQuick2::QtQuick2(QQmlEngine *pEngine)
+QmlTools::QmlTools(QQmlEngine *pEngine)
     : m_pEngine(pEngine) {
         connect(pEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
 }
 
-void QtQuick2::clearComponentCache() {
+void QmlTools::clearComponentCache() {
     m_pEngine->clearComponentCache();
 }
 
-void QtQuick2::setConsoleWarnings(bool value) {
+void QmlTools::setConsoleWarnings(bool value) {
     m_pEngine->setOutputWarningsToStandardError(value);
 }
 
-void QtQuick2::setWarnings(QList<QQmlError> warnings) {
+void QmlTools::setWarnings(QList<QQmlError> warnings) {
     m_warnings.append(warnings);
     emit(warning());
 }
 
-void QtQuick2::clearWarnings() {
+void QmlTools::clearWarnings() {
     m_warnings.clear();
 }
 
-QString QtQuick2::getLastWarning() {
+QString QmlTools::getLastWarning() {
     if (m_warnings.empty()) {
         return "";
     }
@@ -37,7 +37,7 @@ QString QtQuick2::getLastWarning() {
     return m_warnings.at(m_warnings.length() - 1).toString();
 }
 
-QString QtQuick2::getWarnings() {
+QString QmlTools::getWarnings() {
     if (m_warnings.empty()) {
         return "";
     }
@@ -51,13 +51,13 @@ QString QtQuick2::getWarnings() {
 }
 
 
-void QtQuick2::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine) {
+void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine) {
 	QQuickView *pQQuickView = new QQuickView;
 	pQQuickView->setResizeMode(QQuickView::SizeRootObjectToView);
 
     QQmlContext *pContext = pQQuickView->rootContext();
     QQmlEngine *pEngine = pContext->engine();
-    QtQuick2 *pMixxxTools = new QtQuick2(pEngine);
+    QmlTools *pMixxxTools = new QmlTools(pEngine);
     
     pContext->setContextProperty("MixxxEngine", pQmlEngine);
     pContext->setContextProperty("MixxxTools", pMixxxTools);

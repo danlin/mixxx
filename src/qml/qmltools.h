@@ -9,11 +9,11 @@
 
 #include "qmlengine.h"
 
-class QtQuick2 : public QObject 
+class QmlTools : public QObject 
 {
     Q_OBJECT
 public:
-    QtQuick2(QQmlEngine *engine);
+    QmlTools(QQmlEngine *engine);
     
 	static void setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine);
     Q_INVOKABLE void clearComponentCache();

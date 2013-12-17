@@ -22,7 +22,7 @@ public:
     // Player Events
     Q_INVOKABLE void enablePlayerEvents(QString group);
     Q_INVOKABLE void disablePlayerEvents(QString group);
-    
+
     explicit QmlEngine();
     // Setup the MixxxEngine Item
     void setup(PlayerManager* pPlayerManager, Library* pLibrary);
