@@ -6,18 +6,21 @@
 #include <QQmlContext>
 
 #include "qmltools.h"
+#include "qmlengine.h"
 
-QmlTools::QmlTools(QQmlEngine *pEngine)
-    : m_pEngine(pEngine) {
-        connect(pEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
+#include "control/control.h"
+
+QmlTools::QmlTools(QQmlEngine *pQQmlEngine)
+    : m_pQQmlEngine(pQQmlEngine) {
+        connect(m_pQQmlEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
 }
 
 void QmlTools::clearComponentCache() {
-    m_pEngine->clearComponentCache();
+    m_pQQmlEngine->clearComponentCache();
 }
 
-void QmlTools::setConsoleWarnings(bool value) {
-    m_pEngine->setOutputWarningsToStandardError(value);
+void QmlTools::setOutputWarningsToStandardError(bool value) {
+    m_pQQmlEngine->setOutputWarningsToStandardError(value);
 }
 
 void QmlTools::setWarnings(QList<QQmlError> warnings) {
@@ -50,8 +53,36 @@ QString QmlTools::getWarnings() {
     return warnings;
 }
 
+void QmlTools::showControlObjects() {
+    // Check for leaked ControlObjects and give warnings.
+    QList<ControlDoublePrivate*> leakedControls;
+    QList<ConfigKey> leakedConfigKeys;
 
-void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *pQmlEngine) {
+    ControlDoublePrivate::getControls(&leakedControls);
+
+    if (leakedControls.size() > 0) {
+        foreach (ControlDoublePrivate* pCOP, leakedControls) {
+            ConfigKey key = pCOP->getKey();
+            qDebug() << key.group << key.item << pCOP->getCreatorCO();
+            leakedConfigKeys.append(key);
+        }
+
+       foreach (ConfigKey key, leakedConfigKeys) {
+           // delete just to satisfy valgrind:
+           // check if the pointer is still valid, the control object may have bin already
+           // deleted by its parent in this loop
+           ControlObject* pCo = ControlObject::getControl(key, false);
+           if (pCo) {
+
+           }
+       }
+   }
+   qDebug() << "~MixxxApp: All leaking controls deleted.";
+}
+
+void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, PlayerManager* pPlayerManager, Library* pLibrary) {
+    QmlEngine *pQmlEngine = new QmlEngine();
+    pQmlEngine->setup(pPlayerManager, pLibrary);
 	QQuickView *pQQuickView = new QQuickView;
 	pQQuickView->setResizeMode(QQuickView::SizeRootObjectToView);
 
@@ -76,4 +107,5 @@ void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, QmlEngine *
     QVBoxLayout *pLayout = new QVBoxLayout(pQmlWidget);
     pLayout->addWidget(container);
     pLayout->setContentsMargins(0, 0, 0, 0);
+    pQmlEngine->initialized();
 }

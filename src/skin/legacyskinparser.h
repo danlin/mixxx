@@ -99,7 +99,6 @@ class LegacySkinParser : public QObject, public SkinParser {
     static QMutex s_safeStringMutex;
 
     QString m_sSkinPath;
-    QmlEngine *m_pQmlEngine;
 };
 
 

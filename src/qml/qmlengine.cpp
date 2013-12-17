@@ -28,10 +28,11 @@ void QmlEngine::setup(PlayerManager* pPlayerManager, Library* pLibrary) {
      */
 }
 
-double QmlEngine::getValue(QString group, QString name) {
-    ControlObjectThread *cot = getControlObjectThread(group, name);
+double QmlEngine::getValue(QString configKey) {
+    ConfigKey key = ConfigKey::parseCommaSeparated(configKey);
+    ControlObjectThread *cot = getControlObjectThread(key);
     if (cot == NULL) {
-        qWarning() << "QmlEngine::getValue: Unknown control" << group << name;
+        qWarning() << "QmlEngine::getValue: Unknown control" << key.group << key.item;
         return 0.0;
     }
     return cot->get();
@@ -59,36 +60,39 @@ QString QmlEngine::getTrackProperty(QString group, QString property) {
     return "-";
 }
 
-void QmlEngine::setValue(QString group, QString name, double newValue) {
+void QmlEngine::setValue(QString configKey, double newValue) {
+    ConfigKey key = ConfigKey::parseCommaSeparated(configKey);
     if(isnan(newValue)) {
-        qWarning() << "QmlEngine::setValue: setting [" << group << "," << name << "] to NotANumber, ignoring.";
+        qWarning() << "QmlEngine::setValue: setting [" << key.group << "," << key.item << "] to NotANumber, ignoring.";
         return;
     }
-    ControlObjectThread *cot = getControlObjectThread(group, name);
+    ControlObjectThread *cot = getControlObjectThread(key);
     
     if(cot != NULL) {
         cot->set(newValue);
     }
 }
 
-void QmlEngine::enableEvent(QString group, QString name) {
-    ControlObjectThread *cot = getControlObjectThread(group, name);
+void QmlEngine::enableEvent(QString configKey) {
+    ConfigKey key = ConfigKey::parseCommaSeparated(configKey);
+    ControlObjectThread *cot = getControlObjectThread(key);
     if (cot == NULL) {
-        qWarning() << "QMLMixxxEngine enableEvent: Unknown control" << group << name;
+        qWarning() << "QMLMixxxEngine enableEvent: Unknown control" << key.group << key.item;
         return;
     }
     
     connect(cot, SIGNAL(valueChanged(double)), this, SLOT(slotValueChanged(double)));
     connect(cot, SIGNAL(valueChangedByThis(double)), this, SLOT(slotValueChanged(double)));
     
-    QString keyString = group + "," + name;
+    QString keyString = key.group + "," + key.item;
     emit(mixxxEvent(keyString, cot->get()));
 }
 
-void QmlEngine::disableEvent(QString group, QString name) {
-    ControlObjectThread *cot = getControlObjectThread(group, name);
+void QmlEngine::disableEvent(QString configKey) {
+    ConfigKey key = ConfigKey::parseCommaSeparated(configKey);
+    ControlObjectThread *cot = getControlObjectThread(key);
     if (cot == NULL) {
-        qWarning() << "QML Mixxx Engine enableEvent: Unknown control" << group << name;
+        qWarning() << "QML Mixxx Engine enableEvent: Unknown control" << key.group << key.item;
         return;
     }
     
@@ -158,8 +162,7 @@ void QmlEngine::slotValueChanged(double value) {
     emit(mixxxEvent(keyString, value));
 }
 
-ControlObjectThread* QmlEngine::getControlObjectThread(QString group, QString name) {
-    ConfigKey key = ConfigKey(group, name);
+ControlObjectThread* QmlEngine::getControlObjectThread(ConfigKey key) {
     ControlObjectThread *cot = NULL;
     
     if(!m_controlCache.contains(key)) {

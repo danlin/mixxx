@@ -25,10 +25,10 @@ Item {
         id: background
         color: Theme.Current.Background
         anchors.fill: parent
+        property var mixxxValue: 0
         Connections {
-            target: MixxxEngine
-            onMixxxEvent: {
-                if (eventKey == ("[Channel1],beat_active")) {
+            onMixxxValueChanged: {
+                if (mixxxValue == 1) {
                     if (value) {
                         background.color = "#fdf6e3";
                     } else {
@@ -37,6 +37,8 @@ Item {
                 }
             }
         }
+
+        MixxxControlObject on mixxxValue { configKey: "[Channel1],beat_active" }
 
         Rectangle {
             width: 400;
@@ -80,9 +82,9 @@ Item {
         Button {
             x: 100
             y: 200
-            text: "Reset Warnings"
+            text: "Tests"
             onClicked: {
-                MixxxTools.clearWarnings();
+                MixxxTools.showControlObjects();
             }
         }
 

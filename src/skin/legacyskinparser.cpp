@@ -103,9 +103,7 @@ LegacySkinParser::LegacySkinParser(ConfigObject<ConfigValue>* pConfig,
       m_pControllerManager(pControllerManager),
       m_pLibrary(pLibrary),
       m_pVCManager(pVCMan),
-      m_pParent(NULL),
-      m_pQmlEngine(new QmlEngine) {
-    m_pQmlEngine->setup(m_pPlayerManager, m_pLibrary);
+      m_pParent(NULL) {
 }
 
 LegacySkinParser::~LegacySkinParser() {
@@ -447,8 +445,7 @@ QWidget* LegacySkinParser::parseQtQuick(QDomElement node) {
         return pQmlWidget;
     }
 
-    QmlTools::setupWidget(pQmlWidget, skinQmlPath, m_pQmlEngine);
-    m_pQmlEngine->initialized();
+    QmlTools::setupWidget(pQmlWidget, skinQmlPath, m_pPlayerManager, m_pLibrary);
 #else
     qDebug() << "You need QT > 5.0 to run Qt Quick 2 skins"; 
 #endif

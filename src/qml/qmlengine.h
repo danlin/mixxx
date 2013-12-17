@@ -12,13 +12,13 @@ class QmlEngine : public QObject
     Q_OBJECT
 public:
     // Engine Values read write
-    Q_INVOKABLE double getValue(QString group, QString name);
-    Q_INVOKABLE void setValue(QString group, QString name, double newValue);
+    Q_INVOKABLE double getValue(QString configKey);
+    Q_INVOKABLE void setValue(QString configKey, double newValue);
     // Track Properties
     Q_INVOKABLE QString getTrackProperty(QString group, QString property);
     // Engine Events
-    Q_INVOKABLE void enableEvent(QString group, QString name);
-    Q_INVOKABLE void disableEvent(QString group, QString name);
+    Q_INVOKABLE void enableEvent(QString configKey);
+    Q_INVOKABLE void disableEvent(QString configKey);
     // Player Events
     Q_INVOKABLE void enablePlayerEvents(QString group);
     Q_INVOKABLE void disablePlayerEvents(QString group);
@@ -40,7 +40,7 @@ signals:
     void slotUnloadingTrack(TrackPointer);
     
 private:
-    ControlObjectThread* getControlObjectThread(QString group, QString name);
+    ControlObjectThread* getControlObjectThread(ConfigKey key);
     QHash<ConfigKey, ControlObjectThread*> m_controlCache;
     PlayerManager* m_pPlayerManager;
     Library* m_pLibrary;
