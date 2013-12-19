@@ -1261,3 +1261,32 @@ class AutoDjCrates(Feature):
 
     def sources(self, build):
         return ['library/dao/autodjcratesdao.cpp']
+
+
+class QtQuickSkin(Feature):
+    def description(self):
+        return "QtQuick Skin support"
+
+    def enabled(self, build):
+        build.flags['qtquick'] = util.get_flags(build.env, 'qtquick', 1)
+        if int(build.flags['qtquick']):
+            return True
+        return False
+
+    def add_options(self, build, vars):
+        vars.Add('qtquick',
+                 'Set to 1 to enable QtQuick skin support', 1)
+
+    def configure(self, build, conf):
+        if not self.enabled(build):
+            return
+        build.env.Append(CXXFLAGS='-std=c++11')
+        build.env.Append(CXXFLAGS='-Wno-narrowing')    
+        build.env.Append(CPPDEFINES='__QTQUICKSKIN__')
+
+    def sources(self, build):
+        return ['qml/items/qmlwaveform.cpp',
+                'qml/qmlcontrolobject.cpp',
+                'qml/qmlengine.cpp',
+                'qml/qmltools.cpp']
+

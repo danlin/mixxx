@@ -55,6 +55,7 @@ available_features = [features.HifiEq,
                       features.MSVSHacks,
                       features.Vamp,
                       features.AutoDjCrates,
+                      features.QtQuickSkin,
 
                       # "Features" of dubious quality
                       features.PerfTools,

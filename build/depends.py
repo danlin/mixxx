@@ -836,12 +836,6 @@ class MixxxCore(Feature):
                    '#res/mixxx.qrc'
                    ]
         
-        if Qt.qt5_enabled(build):
-            sources.append("qml/items/qmlwaveform.cpp")
-            sources.append("qml/qmlcontrolobject.cpp")
-            sources.append("qml/qmlengine.cpp")
-            sources.append("qml/qmltools.cpp")
-
         proto_args = {
             'PROTOCPROTOPATH': ['src'],
             'PROTOCPYTHONOUTDIR': '',  # set to None to not generate python
