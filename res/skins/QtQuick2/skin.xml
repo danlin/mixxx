@@ -23,13 +23,9 @@
 	</manifest>
 
     <MinimumSize>800,600</MinimumSize>
-    <SizePolicy>me,max</SizePolicy>
+    <SizePolicy>me,me</SizePolicy>
     <Layout>vertical</Layout>
 
-    <Background>
-        <BgColor>#000000</BgColor>
-    </Background>
-	
     <QtQuick>
         <MinimumSize>800,600</MinimumSize>
         <Size>me,me</Size>
