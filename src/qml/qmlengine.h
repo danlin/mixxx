@@ -28,8 +28,8 @@ public:
     void setup(PlayerManager* pPlayerManager, Library* pLibrary);
     void initialized();
 signals:
-    void mixxxEvent(QString eventKey, double value);
-    void mixxxInitialized();
+    void valueChanged(QString eventKey, double value);
+    void isInitialized();
     
     public slots:
     // Engine Slots

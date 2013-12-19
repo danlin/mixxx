@@ -85,7 +85,7 @@ void QmlEngine::enableEvent(QString configKey) {
     connect(cot, SIGNAL(valueChangedByThis(double)), this, SLOT(slotValueChanged(double)));
     
     QString keyString = key.group + "," + key.item;
-    emit(mixxxEvent(keyString, cot->get()));
+    emit(valueChanged(keyString, cot->get()));
 }
 
 void QmlEngine::disableEvent(QString configKey) {
@@ -130,7 +130,7 @@ void QmlEngine::slotLoadTrack(TrackPointer) {
         qWarning() << "QmlEngine::slotLoadTrack() Shouldn't happen -- sender == NULL";
         return;
     }
-    emit(mixxxEvent(sender->getGroup() + ",loadTrack", 1));
+    emit(valueChanged(sender->getGroup() + ",loadTrack", 1));
 }
 
 void QmlEngine::slotNewTrackLoaded(TrackPointer) {
@@ -139,7 +139,7 @@ void QmlEngine::slotNewTrackLoaded(TrackPointer) {
         qWarning() << "QmlEngine::slotNewTrackLoaded() Shouldn't happen -- sender == NULL";
         return;
     }
-    emit(mixxxEvent(sender->getGroup() + ",newTrackLoaded", 1));
+    emit(valueChanged(sender->getGroup() + ",newTrackLoaded", 1));
 }
 
 void QmlEngine::slotUnloadingTrack(TrackPointer) {
@@ -148,7 +148,7 @@ void QmlEngine::slotUnloadingTrack(TrackPointer) {
         qWarning() << "QmlEngine::slotUnloadingTrack() Shouldn't happen -- sender == NULL";
         return;
     }
-    emit(mixxxEvent(sender->getGroup() + ",unloadingTrack", 1));
+    emit(valueChanged(sender->getGroup() + ",unloadingTrack", 1));
 }
 
 void QmlEngine::slotValueChanged(double value) {
@@ -159,7 +159,7 @@ void QmlEngine::slotValueChanged(double value) {
     }
     ConfigKey key = sender->getKey();
     QString keyString = key.group + "," + key.item;
-    emit(mixxxEvent(keyString, value));
+    emit(valueChanged(keyString, value));
 }
 
 ControlObjectThread* QmlEngine::getControlObjectThread(ConfigKey key) {
@@ -176,6 +176,6 @@ ControlObjectThread* QmlEngine::getControlObjectThread(ConfigKey key) {
 }
 
 void QmlEngine::initialized() {
-    emit(mixxxInitialized());
+    emit(isInitialized());
 }
 
