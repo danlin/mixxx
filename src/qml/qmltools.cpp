@@ -8,11 +8,21 @@
 #include "qmltools.h"
 #include "qmlengine.h"
 
-#include "control/control.h"
-
 QmlTools::QmlTools(QQmlEngine *pQQmlEngine)
     : m_pQQmlEngine(pQQmlEngine) {
-        connect(m_pQQmlEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
+    
+    connect(m_pQQmlEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
+    QQmlContext *pContext = pQQmlEngine->rootContext();
+
+    /*
+    QList<QObject*> dataList;
+    for (int i = 0; i <10000; i ++) {
+        CppType *type = new CppType();
+        type->root = i;
+        dataList.append(type);
+    }
+    pContext->setContextProperty("MixxxWarnings", QVariant::fromValue(dataList));
+    */
 }
 
 void QmlTools::clearComponentCache() {
@@ -24,7 +34,9 @@ void QmlTools::setOutputWarningsToStandardError(bool value) {
 }
 
 void QmlTools::setWarnings(QList<QQmlError> warnings) {
-    m_warnings.append(warnings);
+    for (int index = 0; index < warnings.length(); index++) {
+        m_warnings.append(warnings.at(index));
+    }
     emit(warning());
 }
 
@@ -54,6 +66,8 @@ QString QmlTools::getWarnings() {
 }
 
 void QmlTools::showControlObjects() {
+    QList<QObject*> dataList;
+
     // Check for leaked ControlObjects and give warnings.
     QList<ControlDoublePrivate*> leakedControls;
     QList<ConfigKey> leakedConfigKeys;
@@ -63,7 +77,6 @@ void QmlTools::showControlObjects() {
     if (leakedControls.size() > 0) {
         foreach (ControlDoublePrivate* pCOP, leakedControls) {
             ConfigKey key = pCOP->getKey();
-            qDebug() << key.group << key.item << pCOP->getCreatorCO();
             leakedConfigKeys.append(key);
         }
 
@@ -77,7 +90,6 @@ void QmlTools::showControlObjects() {
            }
        }
    }
-   qDebug() << "~MixxxApp: All leaking controls deleted.";
 }
 
 void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, PlayerManager* pPlayerManager, Library* pLibrary) {
@@ -90,6 +102,8 @@ void QmlTools::setupWidget(QWidget* pQmlWidget, QString skinQmlPath, PlayerManag
     QQmlEngine *pEngine = pContext->engine();
     QmlTools *pMixxxTools = new QmlTools(pEngine);
     
+    QList<QObject*> m_pDataList;
+
     pContext->setContextProperty("MixxxEngine", pQmlEngine);
     pContext->setContextProperty("MixxxTools", pMixxxTools);
 
