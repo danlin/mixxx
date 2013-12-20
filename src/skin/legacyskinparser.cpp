@@ -28,7 +28,7 @@
 #include "skin/colorschemeparser.h"
 #include "skin/propertybinder.h"
 
-#ifdef __QTQUICK__
+#ifdef __QTQUICKSKIN__
     #include "qml/qmlengine.h"
     #include "qml/qmltools.h"
 #endif
@@ -434,7 +434,7 @@ QWidget* LegacySkinParser::parseQtQuick(QDomElement node) {
 
     setupWidget(node, pQmlWidget);
 
-#ifdef __QTQUICK__
+#ifdef __QTQUICKSKIN__
     QString filename = XmlParse::selectNodeQString(node, "Path");
 
     QDir skinDir(m_sSkinPath);
