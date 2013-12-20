@@ -82,9 +82,9 @@ Item {
         Button {
             x: 100
             y: 200
-            text: "Tests"
+            text: "Clear List"
             onClicked: {
-                MixxxTools.showControlObjects();
+                MixxxWarnings.removeDuplicates();
             }
         }
 
@@ -106,11 +106,16 @@ Item {
             }
         }
 
-        Spinny {
+        TableView {
             x: 300
             y: 300
-            width: 200
+            width: 400
             height: 200
+            model: MixxxWarnings
+            TableViewColumn {
+                        title: "Title"
+                        width: 120
+                    }
         }
     }
 }
