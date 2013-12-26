@@ -13,16 +13,8 @@ QmlTools::QmlTools(QQmlEngine *pQQmlEngine)
     
     connect(m_pQQmlEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
     QQmlContext *pContext = pQQmlEngine->rootContext();
-
-    /*
-    QList<QObject*> dataList;
-    for (int i = 0; i <10000; i ++) {
-        CppType *type = new CppType();
-        type->root = i;
-        dataList.append(type);
-    }
-    pContext->setContextProperty("MixxxWarnings", QVariant::fromValue(dataList));
-    */
+    m_warnings.append(new DataObject(this, "Test", "bla"));
+    pContext->setContextProperty("MixxxWarnings", QVariant::fromValue(m_warnings));
 }
 
 void QmlTools::clearComponentCache() {
@@ -35,34 +27,16 @@ void QmlTools::setOutputWarningsToStandardError(bool value) {
 
 void QmlTools::setWarnings(QList<QQmlError> warnings) {
     for (int index = 0; index < warnings.length(); index++) {
-        m_warnings.append(warnings.at(index));
+        m_warnings.append(new DataObject(this, warnings.at(index).toString(), "bla"));
     }
     emit(warning());
 }
 
 void QmlTools::clearWarnings() {
+    qDebug() << "clear " << m_warnings.count() << " warnings";
     m_warnings.clear();
-}
-
-QString QmlTools::getLastWarning() {
-    if (m_warnings.empty()) {
-        return "";
-    }
-    
-    return m_warnings.at(m_warnings.length() - 1).toString();
-}
-
-QString QmlTools::getWarnings() {
-    if (m_warnings.empty()) {
-        return "";
-    }
-    
-    QString warnings;
-    for (int i = 0; i < m_warnings.length(); ++i) {
-        warnings += m_warnings.at(i).toString() + "\n";
-    }
-    
-    return warnings;
+    m_warnings.append(new DataObject(this, "Test", "bla"));
+    m_warnings.append(new DataObject(this, "Test", "bla"));
 }
 
 void QmlTools::showControlObjects() {
