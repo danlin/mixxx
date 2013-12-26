@@ -34,7 +34,6 @@
 #endif
 
 #include "widget/wwidget.h"
-#include "widget/wabstractcontrol.h"
 #include "widget/wknob.h"
 #include "widget/wslidercomposed.h"
 #include "widget/wpushbutton.h"
