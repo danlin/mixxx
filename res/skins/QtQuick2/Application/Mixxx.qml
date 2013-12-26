@@ -20,7 +20,13 @@ Item {
             Engine.EventListener.onMixxxEvent(eventKey, value);
         }
     }
-
+    Connections {
+        target: MixxxTools
+        onWarning: {
+            console.log("Update Model");
+            testTable.model = MixxxWarnings;
+        }
+    }
     Rectangle {
         id: background
         color: Theme.Current.Background
@@ -84,7 +90,7 @@ Item {
             y: 200
             text: "Clear List"
             onClicked: {
-                MixxxWarnings.removeDuplicates();
+                MixxxTools.clearWarnings();
             }
         }
 
@@ -111,11 +117,10 @@ Item {
             y: 300
             width: 400
             height: 200
+            id: testTable
             model: MixxxWarnings
-            TableViewColumn {
-                        title: "Title"
-                        width: 120
-                    }
+            TableViewColumn{ role: "name"  ; title: "Title" ; width: 100 }
+            TableViewColumn{ role: "color" ; title: "Author" ; width: 200 }
         }
     }
 }
