@@ -16,7 +16,7 @@ class QmlControlObject : public QObject, public QQmlPropertyValueSource
 {
     Q_OBJECT
     Q_INTERFACES(QQmlPropertyValueSource)
-    Q_PROPERTY(QString configKey READ configKey WRITE setConfigKey NOTIFY configKeyChanged);
+    Q_PROPERTY(QString configKey READ configKey WRITE setConfigKey NOTIFY configKeyChanged)
 public:
     QmlControlObject(QObject *parent = 0);
 
