@@ -22,7 +22,7 @@ mixxx-test
 res/qrc_mixxx.cc
 # Qt Creator
 *.config
-*.creator
+*.creator*
 *.files
 *.includes
 Makefile
