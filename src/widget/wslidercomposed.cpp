@@ -18,7 +18,8 @@
 #include "widget/wslidercomposed.h"
 
 #include <QtDebug>
-#include <QPainter>
+#include <QStylePainter>
+#include <QStyleOption>
 
 #include "defs.h"
 #include "widget/wpixmapstore.h"
@@ -29,7 +30,6 @@ WSliderComposed::WSliderComposed(QWidget * parent)
       m_iPos(0),
       m_iStartHandlePos(0),
       m_iStartMousePos(0),
-      m_iSliderLength(0),
       m_iHandleLength(0),
       m_bHorizontal(false),
       m_bEventWhileDrag(true),
@@ -63,32 +63,23 @@ void WSliderComposed::setup(QDomNode node) {
 void WSliderComposed::setPixmaps(bool bHorizontal, const QString &filenameSlider, const QString &filenameHandle) {
     m_bHorizontal = bHorizontal;
     unsetPixmaps();
-    m_pSlider = WPixmapStore::getPixmap(filenameSlider);
+    m_pSlider = WPixmapStore::getPaintable(filenameSlider);
     if (!m_pSlider) {
         qDebug() << "WSliderComposed: Error loading slider pixmap:" << filenameSlider;
+    } else {
+        // Set size of widget, using size of slider pixmap
+        setFixedSize(m_pSlider->size());
     }
-    m_pHandle = WPixmapStore::getPixmap(filenameHandle);
+
+    m_pHandle = WPixmapStore::getPaintable(filenameHandle);
     if (!m_pHandle) {
         qDebug() << "WSliderComposed: Error loading handle pixmap:" << filenameHandle;
-    }
-
-    if (m_pSlider && m_pHandle) {
-        if (m_bHorizontal) {
-            m_iSliderLength = m_pSlider->width();
-            m_iHandleLength = m_pHandle->width();
-        } else {
-            m_iSliderLength = m_pSlider->height();
-            m_iHandleLength = m_pHandle->height();
-        }
-
-        // Set size of widget, using size of slider pixmap
-        if (m_pSlider) {
-            setFixedSize(m_pSlider->size());
-        }
+    } else {
+        m_iHandleLength = m_bHorizontal ?
+                m_pHandle->width() : m_pHandle->height();
 
         setValue(m_value);
-
-        repaint();
+        update();
     }
 }
 
@@ -108,14 +99,16 @@ void WSliderComposed::mouseMoveEvent(QMouseEvent * e) {
         //qDebug() << "start " << m_iStartPos << ", pos " << m_iPos;
         m_iPos = m_iStartHandlePos + (m_iPos - m_iStartMousePos);
 
-        if (m_iPos > (m_iSliderLength - m_iHandleLength)) {
-            m_iPos = m_iSliderLength - m_iHandleLength;
+        int sliderLength = m_bHorizontal ? width() : height();
+
+        if (m_iPos > (sliderLength - m_iHandleLength)) {
+            m_iPos = sliderLength - m_iHandleLength;
         } else if (m_iPos < 0) {
             m_iPos = 0;
         }
 
         // value ranges from 0 to 127
-        m_value = (double)m_iPos * (127. / (double)(m_iSliderLength - m_iHandleLength));
+        m_value = (double)m_iPos * (127. / (double)(sliderLength - m_iHandleLength));
         if (!m_bHorizontal) {
             m_value = 127. - m_value;
         }
@@ -183,21 +176,19 @@ void WSliderComposed::mousePressEvent(QMouseEvent * e) {
 }
 
 void WSliderComposed::paintEvent(QPaintEvent *) {
-    if (m_pSlider && m_pHandle) {
-        QPainter p(this);
-        int posx;
-        int posy;
-        if (m_bHorizontal) {
-            posx = m_iPos;
-            posy = 0;
-        } else {
-            posx = 0;
-            posy = m_iPos;
-        }
+    QStyleOption option;
+    option.initFrom(this);
+    QStylePainter p(this);
+    p.drawPrimitive(QStyle::PE_Widget, option);
 
-        // Draw slider followed by handle
-        p.drawPixmap(0, 0, *m_pSlider);
-        p.drawPixmap(posx, posy, *m_pHandle);
+    if (!m_pSlider.isNull() && !m_pSlider->isNull()) {
+        m_pSlider->draw(0, 0, &p);
+    }
+
+    if (!m_pHandle.isNull() && !m_pHandle->isNull()) {
+        int posx = m_bHorizontal ? m_iPos : 0;
+        int posy = m_bHorizontal ? 0 : m_iPos;
+        m_pHandle->draw(posx, posy, &p);
     }
 }
 
@@ -211,10 +202,11 @@ void WSliderComposed::setValue(double fValue) {
         if (!m_bHorizontal) {
             fValue = 127-fValue;
         }
-        m_iPos = (int)((fValue / 127.) * (double)(m_iSliderLength - m_iHandleLength));
+        int sliderLength = m_bHorizontal ? width() : height();
+        m_iPos = (int)((fValue / 127.) * (double)(sliderLength - m_iHandleLength));
 
-        if (m_iPos > (m_iSliderLength - m_iHandleLength)) {
-            m_iPos = m_iSliderLength - m_iHandleLength;
+        if (m_iPos > (sliderLength - m_iHandleLength)) {
+            m_iPos = sliderLength - m_iHandleLength;
         } else if (m_iPos < 0) {
             m_iPos = 0;
         }

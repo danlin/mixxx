@@ -19,7 +19,8 @@
 #include "widget/wstatuslight.h"
 
 #include <QPaintEvent>
-#include <QPainter>
+#include <QStylePainter>
+#include <QStyleOption>
 #include <QtDebug>
 #include <QPixmap>
 
@@ -72,7 +73,7 @@ void WStatusLight::setPixmap(int iState, const QString& filename) {
         return;
     }
 
-    QPixmapPointer pPixmap = WPixmapStore::getPixmap(filename);
+    PaintablePointer pPixmap = WPixmapStore::getPaintable(filename);
 
     if (!pPixmap.isNull() && !pPixmap->isNull()) {
         m_pixmaps[iState] = pPixmap;
@@ -106,16 +107,20 @@ void WStatusLight::setValue(double v) {
 }
 
 void WStatusLight::paintEvent(QPaintEvent *) {
+    QStyleOption option;
+    option.initFrom(this);
+    QStylePainter p(this);
+    p.drawPrimitive(QStyle::PE_Widget, option);
+
     if (m_iPos < 0 || m_iPos >= m_pixmaps.size()) {
         return;
     }
 
-    QPixmapPointer pPixmap = m_pixmaps[m_iPos];
+    PaintablePointer pPixmap = m_pixmaps[m_iPos];
 
     if (pPixmap.isNull() || pPixmap->isNull()) {
         return;
     }
 
-    QPainter p(this);
-    p.drawPixmap(0, 0, *pPixmap);
+    pPixmap->draw(0, 0, &p);
 }
