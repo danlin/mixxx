@@ -8,6 +8,7 @@
 #include <QQmlError>
 
 #include "qmlengine.h"
+#include "data/qmlerrormodel.h"
 
 class DataObject : public QObject
 {
@@ -17,7 +18,8 @@ class DataObject : public QObject
     Q_PROPERTY(QString color READ color WRITE setColor NOTIFY colorChanged)
     
 public:
-    DataObject(QObject *parent, QString name, QString color) :
+    DataObject(QObject *parent = 0) : QObject(parent) {}
+    DataObject(QString name, QString color, QObject *parent = 0) :
         QObject(parent),
         m_name(name),
         m_color(color) {
@@ -66,7 +68,7 @@ public slots:
 
 private:
     QQmlEngine *m_pQQmlEngine;
-    QList<QObject*> m_warnings;
+    QmlErrorModel *m_errors;
 };
 
 #endif // QTQUICK2_H

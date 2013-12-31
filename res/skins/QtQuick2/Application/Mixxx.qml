@@ -20,13 +20,7 @@ Item {
             Engine.EventListener.onMixxxEvent(eventKey, value);
         }
     }
-    Connections {
-        target: MixxxTools
-        onWarning: {
-            console.log("Update Model");
-            testTable.model = MixxxWarnings;
-        }
-    }
+
     Rectangle {
         id: background
         color: Theme.Current.Background
@@ -112,6 +106,7 @@ Item {
             }
         }
 
+        
         TableView {
             x: 300
             y: 300
@@ -119,8 +114,8 @@ Item {
             height: 200
             id: testTable
             model: MixxxWarnings
-            TableViewColumn{ role: "name"  ; title: "Title" ; width: 100 }
-            TableViewColumn{ role: "color" ; title: "Author" ; width: 200 }
+            TableViewColumn{ role: "string"  ; title: "Error" ; width: 400 }
         }
+        
     }
 }

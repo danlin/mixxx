@@ -1289,5 +1289,6 @@ class QtQuickSkin(Feature):
         return ['qml/items/qmlwaveform.cpp',
                 'qml/qmlcontrolobject.cpp',
                 'qml/qmlengine.cpp',
-                'qml/qmltools.cpp']
+                'qml/qmltools.cpp',
+                'qml/data/qmlerrormodel.cpp']
 

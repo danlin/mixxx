@@ -2,6 +2,7 @@
 #include <QMessageBox>
 
 #include <QQuickView>
+#include <QtQml>
 #include <QQmlError>
 #include <QQmlContext>
 
@@ -13,8 +14,8 @@ QmlTools::QmlTools(QQmlEngine *pQQmlEngine)
     
     connect(m_pQQmlEngine, SIGNAL(warnings(QList<QQmlError>)), this, SLOT(setWarnings(QList<QQmlError>)));
     QQmlContext *pContext = pQQmlEngine->rootContext();
-    m_warnings.append(new DataObject(this, "Test", "bla"));
-    pContext->setContextProperty("MixxxWarnings", QVariant::fromValue(m_warnings));
+    m_errors = new QmlErrorModel();
+    pContext->setContextProperty("MixxxWarnings", m_errors);
 }
 
 void QmlTools::clearComponentCache() {
@@ -27,16 +28,13 @@ void QmlTools::setOutputWarningsToStandardError(bool value) {
 
 void QmlTools::setWarnings(QList<QQmlError> warnings) {
     for (int index = 0; index < warnings.length(); index++) {
-        m_warnings.append(new DataObject(this, warnings.at(index).toString(), "bla"));
+        m_errors->addError(warnings.at(index));
     }
     emit(warning());
 }
 
 void QmlTools::clearWarnings() {
-    qDebug() << "clear " << m_warnings.count() << " warnings";
-    m_warnings.clear();
-    m_warnings.append(new DataObject(this, "Test", "bla"));
-    m_warnings.append(new DataObject(this, "Test", "bla"));
+    m_errors->clear();
 }
 
 void QmlTools::showControlObjects() {

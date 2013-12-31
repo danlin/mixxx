@@ -25,11 +25,8 @@ Item {
         onWarning: {
             if (mixxxApplication.holdOnWarnings) {
                 if (!mixxxErrorScreen.visible) {
-                    mixxxErrorScreen.errorMessage = MixxxTools.getLastWarning();
                     mixxxErrorScreen.isWarning = true;
                     mixxxApplication.errorVisible = true;
-                } else if (mixxxErrorScreen.isWarning) {
-                    mixxxErrorScreen.errorMessage += MixxxTools.getLastWarning();
                 }
             }
         }
@@ -133,14 +130,44 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: mixxxErrorScreen.isWarning ? "Warning" : "Mixxx User Interface Crashed"
         }
-        
-        Text {
-            color: Theme.Current.ContentPrimary
-            font.pointSize: 14
-            width: parent.width
-            wrapMode: Text.WordWrap
-            text: mixxxErrorScreen.errorMessage
+
+        Rectangle {
+            id: errorListContainer
+            anchors.fill: parent
+            color: "transparent"
+
+            Component {
+                id: contactDelegate
+                Item {
+                    width: parent.width
+                    height: 40
+                    Column {
+                        Text { color: Theme.Current.ContentPrimary; text: '<b>Error:</b> ' + description }
+                        Text { color: Theme.Current.ContentPrimary; text: '<b>File:</b> ' + url + ':'  + line + ':' + column }
+                    }
+                    
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onClicked: {
+                            errorListView.currentIndex = index
+                        }
+                    }
+                }
+            }
+
+            ListView {
+                id: errorListView
+                anchors.fill: parent
+                model: MixxxWarnings
+                delegate: contactDelegate
+                highlight: Rectangle { color: Theme.Current.BackgroundHighlights; }
+                focus: true
+            }
         }
+
 
         Rectangle {
             width: parent.width
