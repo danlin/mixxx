@@ -16,7 +16,7 @@ Item {
     
     Connections {
         target: MixxxEngine
-        onMixxxEvent: {
+        onValueChanged: {
             Engine.EventListener.onMixxxEvent(eventKey, value);
         }
     }
@@ -56,7 +56,7 @@ Item {
             text: "Press for Warning"
             Connections {
                 target: MixxxEngine
-                onMixxxEvent: {
+                onValueChanged: {
                     if (eventKey == ("[Channel1],VuMeter")) {
                         console.log(value);
                         if (value) {

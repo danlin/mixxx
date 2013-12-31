@@ -143,7 +143,10 @@ Item {
                     height: 40
                     Column {
                         Text { color: Theme.Current.ContentPrimary; text: '<b>Error:</b> ' + description }
-                        Text { color: Theme.Current.ContentPrimary; text: '<b>File:</b> ' + url + ':'  + line + ':' + column }
+                        Text { 
+                            color: Theme.Current.ContentPrimary; 
+                            text: '<b>File:</b> ' + url + ':'  + line + ':' + column 
+                        }
                     }
                     
                     MouseArea {
@@ -153,6 +156,7 @@ Item {
 
                         onClicked: {
                             errorListView.currentIndex = index
+                            Qt.openUrlExternally(url)
                         }
                     }
                 }
