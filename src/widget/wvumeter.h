@@ -27,6 +27,7 @@
 
 #include "widget/wwidget.h"
 #include "widget/wpixmapstore.h"
+#include "skin/skincontext.h"
 
 class WVuMeter : public WWidget  {
    Q_OBJECT
@@ -34,8 +35,9 @@ class WVuMeter : public WWidget  {
     WVuMeter(QWidget *parent=0);
     virtual ~WVuMeter();
 
-    void setup(QDomNode node);
-    void setPixmaps(const QString &backFilename, const QString &vuFilename,
+    void setup(QDomNode node, const SkinContext& context);
+    void setPixmapBackground(const QString& filename);
+    void setPixmaps(const QString &vuFilename,
                     bool bHorizontal=false);
     void setValue(double fValue);
 
