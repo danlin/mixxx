@@ -17,15 +17,6 @@ QmlEngine::QmlEngine()
 void QmlEngine::setup(PlayerManager* pPlayerManager, Library* pLibrary) {
     m_pPlayerManager = pPlayerManager;
     m_pLibrary = pLibrary;
-    
-    // setup all QML Widget Proyxies here
-    /*
-     QList<QmlOverview *> pOverviewWidgets = pMyView->rootObject()->findChildren<QmlExample*>("MixxxExample");
-     for (int i = 0; i < pOverviewWidgets.size(); ++i) {
-     if (pOverviewWidgets.at(i) != NULL)
-     pOverviewWidgets.at(i)->setup();
-     }
-     */
 }
 
 double QmlEngine::getValue(QString configKey) {

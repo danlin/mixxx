@@ -66,7 +66,7 @@ Item {
                 }
             }
             onClicked: {
-                console.log("test");dasdsa
+                console.log("test");asdf
             }
         }
 

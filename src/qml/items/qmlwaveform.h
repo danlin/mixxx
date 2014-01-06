@@ -6,7 +6,7 @@
 #include <QQuickWindow>
 
 #include "waveform/renderers/waveformwidgetrenderer.h"
-#include "waveform/renderers/glwaveformrendererfilteredsignal.h"
+#include "waveform/renderers/glwaveformrenderersimplesignal.h"
 
 class QmlWaveform : public QQuickItem
 {
@@ -24,7 +24,7 @@ private slots:
     
 private:
     WaveformWidgetRenderer* m_waveformWidgetRenderer;
-    GLWaveformRendererFilteredSignal *m_renderer;
+    GLWaveformRendererSimpleSignal *m_renderer;
 };
 
 #endif // QMLWAVEFORM_H

@@ -4,7 +4,7 @@
 
 QmlWaveform::QmlWaveform() {
     m_waveformWidgetRenderer = new WaveformWidgetRenderer("[Channel1]");
-    m_renderer = new GLWaveformRendererFilteredSignal(m_waveformWidgetRenderer);
+    m_renderer = new GLWaveformRendererSimpleSignal(m_waveformWidgetRenderer);
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
 
