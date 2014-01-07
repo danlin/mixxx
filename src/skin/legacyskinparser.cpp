@@ -412,7 +412,7 @@ QList<QWidget*> LegacySkinParser::parseNode(QDomElement node) {
     } else if (nodeName == "Library") {
         result = wrapWidget(parseLibrary(node));
     } else if (nodeName == "QtQuick") {
-        result = parseQtQuick(node);
+        result = wrapWidget(parseQtQuick(node));
     } else if (nodeName == "Key") {
         result = wrapWidget(parseKey(node));
     } else if (nodeName == "SetVariable") {
