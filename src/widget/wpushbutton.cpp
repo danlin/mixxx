@@ -62,7 +62,7 @@ void WPushButton::setup(QDomNode node, const SkinContext& context) {
 
     // Set background pixmap if available
     if (context.hasNode(node, "BackPath")) {
-        setPixmapBackground(getPath(context.selectString(node, "BackPath")));
+        setPixmapBackground(context.getSkinPath(context.selectString(node, "BackPath")));
     }
 
     // Load pixmaps for associated states
@@ -72,22 +72,19 @@ void WPushButton::setup(QDomNode node, const SkinContext& context) {
             int iState = context.selectInt(state, "Number");
             if (context.hasNode(state, "Pressed")) {
                 setPixmap(iState, true,
-                          getPath(context.selectString(state, "Pressed")));
+                          context.getSkinPath(context.selectString(state, "Pressed")));
             }
             if (context.hasNode(state, "Unpressed")) {
                 setPixmap(iState, false,
-                          getPath(context.selectString(state, "Unpressed")));
+                          context.getSkinPath(context.selectString(state, "Unpressed")));
             }
             m_text[iState] = context.selectString(state, "Text");
         }
         state = state.nextSibling();
     }
 
-    m_bLeftClickForcePush = context.selectString(node, "LeftClickIsPushButton")
-            .contains("true", Qt::CaseInsensitive);
-
-    m_bRightClickForcePush = context.selectString(node, "RightClickIsPushButton")
-            .contains("true", Qt::CaseInsensitive);
+    m_bLeftClickForcePush = context.selectBool(node, "LeftClickIsPushButton", false);
+    m_bRightClickForcePush = context.selectBool(node, "RightClickIsPushButton", false);
 
     QDomNode con = context.selectNode(node, "Connection");
     while (!con.isNull()) {
@@ -129,7 +126,7 @@ void WPushButton::setup(QDomNode node, const SkinContext& context) {
 }
 
 void WPushButton::setStates(int iStates) {
-    m_value = 0.;
+    setValue(0.0);
     m_bPressed = false;
     m_iNoStates = 0;
 
@@ -175,11 +172,11 @@ void WPushButton::setPixmapBackground(const QString &filename) {
     }
 }
 
-void WPushButton::setValue(double v) {
-    m_value = v;
+void WPushButton::slotConnectedValueChanged(double v) {
+    setValue(v);
 
     if (m_iNoStates == 1) {
-        if (m_value == 1.0) {
+        if (v == 1.0) {
             m_bPressed = true;
         } else {
             m_bPressed = false;
@@ -195,7 +192,7 @@ void WPushButton::paintEvent(QPaintEvent* e) {
     QStylePainter p(this);
     p.drawPrimitive(QStyle::PE_Widget, option);
 
-    double value = m_value;
+    double value = getValue();
     if (m_iNoStates == 0) {
         return;
     }
@@ -233,11 +230,11 @@ void WPushButton::mousePressEvent(QMouseEvent * e) {
 
     if (leftPowerWindowStyle && m_iNoStates == 2) {
         if (leftClick) {
-            if (m_value == 0.0f) {
+            if (getValue() == 0.0) {
                 m_clickTimer.setSingleShot(true);
                 m_clickTimer.start(ControlPushButtonBehavior::kPowerWindowTimeMillis);
             }
-            m_value = 1.0f;
+            setValue(1.0);
             m_bPressed = true;
             emit(valueChangedLeftDown(1.0f));
             update();
@@ -255,7 +252,7 @@ void WPushButton::mousePressEvent(QMouseEvent * e) {
             update();
         } else if (m_iNoStates == 1) {
             // This is a Pushbutton
-            m_value = 1.0f;
+            setValue(1.0);
             m_bPressed = true;
             emit(valueChangedRightDown(1.0f));
             update();
@@ -276,13 +273,14 @@ void WPushButton::mousePressEvent(QMouseEvent * e) {
         if (m_bLeftClickForcePush) {
             // This may a button with different functions on each mouse button
             // m_value is changed by a separate feedback connection
-            emitValue = 1.0f;
+            emitValue = 1.0;
         } else if (m_iNoStates == 1) {
             // This is a Pushbutton
-            m_value = emitValue = 1.0f;
+            emitValue = 1.0;
+            setValue(emitValue);
         } else {
             // Toggle thru the states
-            m_value = emitValue = (int)(m_value + 1.) % m_iNoStates;
+            emitValue = (int)(getValue() + 1.) % m_iNoStates;
             if (leftLongPressLatchingStyle) {
                 m_clickTimer.setSingleShot(true);
                 m_clickTimer.start(ControlPushButtonBehavior::kLongPressLatchingTimeMillis);
@@ -311,7 +309,7 @@ void WPushButton::mouseReleaseEvent(QMouseEvent * e) {
             const bool rightButtonDown = QApplication::mouseButtons() & Qt::RightButton;
             if (m_bPressed && !m_clickTimer.isActive() && !rightButtonDown) {
                 // Release button after timer, but not if right button is clicked
-                m_value = 0.0f;
+                setValue(0.0);
                 emit(valueChangedLeftUp(0.0f));
             }
             m_bPressed = false;
@@ -339,18 +337,20 @@ void WPushButton::mouseReleaseEvent(QMouseEvent * e) {
     }
 
     if (leftClick) {
-        double emitValue = m_value;
+        double emitValue = getValue();
         if (m_bLeftClickForcePush) {
             // This may a klickButton with different functions on each mouse button
             // m_fValue is changed by a separate feedback connection
-            emitValue = 0.0f;
+            emitValue = 0.0;
         } else if (m_iNoStates == 1) {
             // This is a Pushbutton
-            m_value = emitValue = 0.0f;
+            emitValue = 0.0;
+            setValue(emitValue);
         } else {
-            if (leftLongPressLatchingStyle && m_clickTimer.isActive() && m_value >= 1.0) {
+            if (leftLongPressLatchingStyle && m_clickTimer.isActive() && emitValue >= 1.0) {
                 // revert toggle if button is released too early
-                m_value = emitValue = (int)(m_value - 1.0) % m_iNoStates;
+                emitValue = (int)(emitValue - 1.0) % m_iNoStates;
+                setValue(emitValue);
             } else {
                 // Nothing special happens when releasing a normal toggle button
             }

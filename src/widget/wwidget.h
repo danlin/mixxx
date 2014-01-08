@@ -40,12 +40,6 @@ public:
     WWidget(QWidget *parent=0, Qt::WindowFlags flags=0);
     virtual ~WWidget();
 
-    // Sets the path used to find pixmaps
-    static void setPixmapPath(QString qPath);
-
-    // Given a filename of a pixmap, returns its path
-    static const QString getPath(QString location);
-
     // Sometimes WWidget's compose a QWidget (like a label). This is used during
     // skin parsing to style and size the composed widget.
     virtual QWidget* getComposedWidget() { return NULL; }
@@ -61,8 +55,12 @@ public:
         return m_value;
     }
 
+    void setValue(double value) {
+        m_value = value;
+    }
+
   public slots:
-    virtual void setValue(double value);
+    virtual void slotConnectedValueChanged(double value);
     void updateValue(double value);
     void setOnOff(double);
 
@@ -79,17 +77,12 @@ public:
     void valueChangedRightDown(double);
     void valueChangedRightUp(double);
 
-  protected:
+  private:
     // Value/state of widget
     double m_value;
+
     // Is true if widget is off
     bool m_bOff;
-
-  private:
-    // Variable containing the path to the pixmaps
-    static QString m_qPath;
-    // Property used when connecting to ControlObject
-    //bool m_bEmitOnDownPress;
 };
 
 #endif

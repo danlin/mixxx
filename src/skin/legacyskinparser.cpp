@@ -157,9 +157,6 @@ QDomElement LegacySkinParser::openSkin(QString skinPath) {
         return QDomElement();
     }
 
-    // TODO(XXX) legacy
-    WWidget::setPixmapPath(skinPath.append("/"));
-
     skinXmlFile.close();
     return skin.documentElement();
 }
@@ -285,6 +282,7 @@ QWidget* LegacySkinParser::parseSkin(QString skinPath, QWidget* pParent) {
     // fullscreen mostly) --bkgood
     m_pParent = pParent;
     m_pContext = new SkinContext();
+    m_pContext->setSkinBasePath(skinPath.append("/"));
     QList<QWidget*> widgets = parseNode(skinDocument);
 
     if (widgets.empty()) {
@@ -637,7 +635,8 @@ QWidget* LegacySkinParser::parseBackground(QDomElement node,
     QLabel* bg = new QLabel(pInnerWidget);
 
     QString filename = m_pContext->selectString(node, "Path");
-    QPixmap* background = WPixmapStore::getPixmapNoCache(WWidget::getPath(filename));
+    QPixmap* background = WPixmapStore::getPixmapNoCache(
+        m_pContext->getSkinPath(filename));
 
     bg->move(0, 0);
     if (background != NULL && !background->isNull()) {
@@ -1609,8 +1608,7 @@ void LegacySkinParser::setupWidget(QDomNode node, QWidget* pWidget, bool setPosi
 
     QString style = getStyleFromNode(node);
     // Check if we should apply legacy library styling to this node.
-    if (m_pContext->selectString(node, "LegacyTableViewStyle")
-        .contains("true", Qt::CaseInsensitive)) {
+    if (m_pContext->selectBool(node, "LegacyTableViewStyle", false)) {
         style = getLibraryStyle(node);
     }
     if (style != "") {
@@ -1657,19 +1655,14 @@ void LegacySkinParser::setupConnections(QDomNode node, QWidget* pWidget) {
             ControlObjectThreadWidget::EmitOption emitOption = ControlObjectThreadWidget::EMIT_ON_PRESS;
 
             // Get properties from XML, or use defaults
-            if (m_pContext->selectString(con, "EmitOnPressAndRelease").contains("true", Qt::CaseInsensitive))
+            if (m_pContext->selectBool(con, "EmitOnPressAndRelease", false))
                 emitOption = ControlObjectThreadWidget::EMIT_ON_PRESS_AND_RELEASE;
 
-            if (m_pContext->selectString(con, "EmitOnDownPress").contains("false", Qt::CaseInsensitive))
+            if (!m_pContext->selectBool(con, "EmitOnDownPress", true))
                 emitOption = ControlObjectThreadWidget::EMIT_ON_RELEASE;
 
-            bool connectValueFromWidget = true;
-            if (m_pContext->selectString(con, "ConnectValueFromWidget").contains("false", Qt::CaseInsensitive))
-                connectValueFromWidget = false;
-
-            bool connectValueToWidget = true;
-            if (m_pContext->selectString(con, "ConnectValueToWidget").contains("false", Qt::CaseInsensitive))
-                connectValueToWidget = false;
+            bool connectValueFromWidget = m_pContext->selectBool(con, "ConnectValueFromWidget", true);
+            bool connectValueToWidget = m_pContext->selectBool(con, "ConnectValueToWidget", true);
 
             Qt::MouseButton state = Qt::NoButton;
             if (m_pContext->hasNode(con, "ButtonState")) {

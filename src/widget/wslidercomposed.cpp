@@ -47,16 +47,12 @@ void WSliderComposed::setup(QDomNode node, const SkinContext& context) {
     unsetPixmaps();
 
     if (context.hasNode(node, "Slider")) {
-        QString pathSlider = getPath(context.selectString(node, "Slider"));
+        QString pathSlider = context.getSkinPath(context.selectString(node, "Slider"));
         setSliderPixmap(pathSlider);
     }
 
-    QString pathHandle = getPath(context.selectString(node, "Handle"));
-    QString pathHorizontal = context.selectString(node, "Horizontal");
-    bool h = false;
-    if (pathHorizontal.contains("true",Qt::CaseInsensitive)) {
-        h = true;
-    }
+    QString pathHandle = context.getSkinPath(context.selectString(node, "Handle"));
+    bool h = context.selectBool(node, "Horizontal", false);
     setHandlePixmap(h, pathHandle);
 
     if (context.hasNode(node, "EventWhileDrag")) {
@@ -85,7 +81,7 @@ void WSliderComposed::setHandlePixmap(bool bHorizontal, const QString& filenameH
         m_iHandleLength = m_bHorizontal ?
                 m_pHandle->width() : m_pHandle->height();
 
-        setValue(m_value);
+        slotConnectedValueChanged(getValue());
         update();
     }
 }
@@ -117,18 +113,19 @@ void WSliderComposed::mouseMoveEvent(QMouseEvent * e) {
 
         // Divide by (sliderLength - m_iHandleLength) to produce a normalized
         // value in the range of [0.0, 1.0].  1.0
-        m_value = static_cast<double>(m_iPos) /
+        double newValue = static_cast<double>(m_iPos) /
                 static_cast<double>(sliderLength - m_iHandleLength);
         if (!m_bHorizontal) {
-            m_value = 1.0 - m_value;
+            newValue = 1.0 - newValue;
         }
+        setValue(newValue);
 
         // Emit valueChanged signal
         if (m_bEventWhileDrag) {
             if (e->button() == Qt::RightButton) {
-                emit(valueChangedRightUp(m_value));
+                emit(valueChangedRightUp(newValue));
             } else {
-                emit(valueChangedLeftUp(m_value));
+                emit(valueChangedLeftUp(newValue));
             }
         }
 
@@ -157,9 +154,9 @@ void WSliderComposed::mouseReleaseEvent(QMouseEvent * e) {
         mouseMoveEvent(e);
 
         if (e->button() == Qt::RightButton) {
-            emit(valueChangedRightUp(m_value));
+            emit(valueChangedRightUp(getValue()));
         } else {
-            emit(valueChangedLeftUp(m_value));
+            emit(valueChangedLeftUp(getValue()));
         }
 
         m_bDrag = false;
@@ -207,11 +204,11 @@ void WSliderComposed::paintEvent(QPaintEvent *) {
     }
 }
 
-void WSliderComposed::setValue(double dValue) {
-    if (!m_bDrag && m_value != dValue) {
+void WSliderComposed::slotConnectedValueChanged(double dValue) {
+    if (!m_bDrag && getValue() != dValue) {
         // Set value without emitting a valueChanged signal
         // and force display update
-        m_value = dValue;
+        setValue(dValue);
 
         // Calculate handle position
         if (!m_bHorizontal) {

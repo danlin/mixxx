@@ -21,9 +21,6 @@
 #include "controlobject.h"
 #include "controlobjectthreadwidget.h"
 
-// Static member variable definition
-QString WWidget::m_qPath;
-
 WWidget::WWidget(QWidget* parent, Qt::WindowFlags flags)
         : QWidget(parent, flags),
           m_value(0.0),
@@ -40,7 +37,7 @@ WWidget::WWidget(QWidget* parent, Qt::WindowFlags flags)
 WWidget::~WWidget() {
 }
 
-void WWidget::setValue(double value) {
+void WWidget::slotConnectedValueChanged(double value) {
     m_value = value;
     update();
 }
@@ -62,17 +59,8 @@ void WWidget::slotReEmitValueUp(double value) {
     emit(valueChangedUp(value));
 }
 
-const QString WWidget::getPath(QString location) {
-    QString l(location);
-    return l.prepend(m_qPath);
-}
-
-void WWidget::setPixmapPath(QString qPath) {
-    m_qPath = qPath;
-}
-
 void WWidget::updateValue(double value) {
-    setValue(value);
+    slotConnectedValueChanged(value);
     emit(valueChangedUp(value));
     emit(valueChangedDown(value));
 }
