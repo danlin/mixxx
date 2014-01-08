@@ -432,7 +432,7 @@ QWidget* LegacySkinParser::parseQtQuick(QDomElement node) {
     setupWidget(node, pQmlWidget);
 
 #ifdef __QTQUICKSKIN__
-    QString filename = XmlParse::selectNodeQString(node, "Path");
+    QString filename = m_pContext->selectString(node, "Path");
 
     QDir skinDir(m_sSkinPath);
     QString skinQmlPath = skinDir.filePath(filename);
