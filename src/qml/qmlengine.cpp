@@ -5,12 +5,14 @@
 #include "controlobjectthread.h"
 
 #include "qml/items/qmlwaveform.h"
+#include "qml/items/qmloverview.h"
 #include "qml/qmlcontrolobject.h"
 
 QmlEngine::QmlEngine()
 {
     // register all QML Widget Proxies here
     qmlRegisterType<QmlWaveform>("Mixxx", 1,0, "MixxxWaveform");
+    qmlRegisterType<QmlOverview>("Mixxx", 1,0, "MixxxOverview");
     qmlRegisterType<QmlControlObject>("Mixxx", 1,0, "MixxxControlObject");
 }
 

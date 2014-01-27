@@ -43,8 +43,8 @@ Item {
         Rectangle {
             width: 400;
             height: 150;
-            color: Theme.Current.BackgroundHighlights
-            MixxxWaveform {
+            color: Theme.Colors.Red
+            MixxxOverview {
                 anchors.fill: parent
             }
         }

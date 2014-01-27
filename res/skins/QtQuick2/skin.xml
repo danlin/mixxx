@@ -19,7 +19,6 @@
     <Layout>vertical</Layout>
     <Children>
         <QtQuick>
-            <MinimumSize>800,600</MinimumSize>
             <Size>me,me</Size>
             <Path>Application/Main.qml</Path>
         </QtQuick>

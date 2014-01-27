@@ -1268,6 +1268,7 @@ class QtQuickSkin(Feature):
 
     def sources(self, build):
         return ['qml/items/qmlwaveform.cpp',
+                'qml/items/qmloverview.cpp',
                 'qml/qmlcontrolobject.cpp',
                 'qml/qmlengine.cpp',
                 'qml/qmltools.cpp',
